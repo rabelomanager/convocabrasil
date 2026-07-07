@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convocação Seleção Brasileira — Copa 2026</title>
+<style>
+  :root{
+    --verde:#009c3b; --verde-claro:#00c853; --verde-campo:#0a7c37; --verde-campo2:#0c8a3e;
+    --amarelo:#ffdf00; --azul:#002776; --azul-escuro:#041d3d; --azul-card:#0a2a52;
+    --branco:#ffffff; --cinza:#9fb3cc;
+    --c-gol:#e8e8e8; --c-def:#00c853; --c-mei:#4da3ff; --c-ata:#ffdf00;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:'Segoe UI',Roboto,Arial,sans-serif;
+    background:linear-gradient(160deg,#041d3d 0%,#062a54 45%,#043d26 100%);
+    color:var(--branco); min-height:100vh; padding-bottom:60px;
+  }
+  h1,h2,h3,.display{font-family:'Arial Black','Segoe UI',sans-serif;text-transform:uppercase;letter-spacing:.5px}
+
+  /* ===== topo ===== */
+  .topbar{
+    display:flex;align-items:center;gap:14px;padding:16px 20px 12px;
+    background:linear-gradient(90deg,rgba(0,39,118,.55),rgba(0,156,59,.35));
+    border-bottom:3px solid var(--amarelo);
+  }
+  .crest{
+    width:52px;height:52px;flex:none;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 35% 30%,#ffe95c,var(--amarelo) 70%);
+    color:var(--azul);font-size:26px;border:3px solid var(--verde);border-radius:50%;
+    box-shadow:0 0 0 3px var(--azul),0 4px 14px rgba(0,0,0,.5);
+  }
+  .topbar h1{font-size:clamp(15px,3.6vw,24px);line-height:1.15;color:var(--amarelo)}
+  .topbar .sub{font-size:clamp(11px,2.4vw,13px);color:var(--cinza);margin-top:2px}
+
+  /* ===== passos ===== */
+  .steps{display:flex;gap:10px;padding:14px 20px 0;max-width:1180px;margin:0 auto}
+  .step{
+    flex:1;max-width:340px;padding:10px 14px;border-radius:12px;cursor:pointer;border:2px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.06);color:var(--branco);font-family:'Arial Black',sans-serif;
+    font-size:clamp(11px,2.6vw,14px);text-transform:uppercase;letter-spacing:.5px;text-align:left;
+    transition:all .15s;
+  }
+  .step small{display:block;font-family:'Segoe UI',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;color:var(--cinza);font-size:11px;margin-top:2px}
+  .step.active{background:var(--amarelo);color:var(--azul);border-color:var(--amarelo);box-shadow:0 4px 16px rgba(255,223,0,.35)}
+  .step.active small{color:#334}
+  .step.done:not(.active){border-color:var(--verde-claro)}
+  .step:disabled{opacity:.45;cursor:not-allowed}
+
+  main{max-width:1180px;margin:0 auto;padding:16px 16px 0}
+  .hidden{display:none!important}
+
+  /* ===== resumo convocação ===== */
+  .summary{
+    display:flex;flex-wrap:wrap;align-items:center;gap:12px;
+    background:rgba(0,39,118,.45);border:1px solid rgba(255,255,255,.12);
+    border-radius:14px;padding:14px 16px;margin-bottom:14px;
+  }
+  .bignum{font-family:'Arial Black',sans-serif;font-size:30px;color:var(--amarelo);line-height:1}
+  .bignum small{font-size:14px;color:var(--cinza);font-family:'Segoe UI',sans-serif}
+  .bar{flex:1 1 160px;height:10px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;min-width:120px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--verde-claro),var(--amarelo));border-radius:99px;transition:width .25s}
+  .gcounts{display:flex;gap:6px;flex-wrap:wrap}
+  .gchip{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15)}
+  .gchip.warn{background:rgba(220,60,60,.25);border-color:#e05a5a;color:#ffb4b4}
+  .btn{
+    border:none;border-radius:12px;padding:12px 18px;cursor:pointer;font-weight:800;font-size:14px;
+    font-family:'Arial Black',sans-serif;text-transform:uppercase;letter-spacing:.5px;transition:all .15s;
+  }
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn-go{background:var(--verde-claro);color:#03210f;box-shadow:0 4px 14px rgba(0,200,83,.35)}
+  .btn-go:not(:disabled):hover{transform:translateY(-1px)}
+  .btn-sec{background:rgba(255,255,255,.12);color:var(--branco);border:1px solid rgba(255,255,255,.2);font-family:'Segoe UI',sans-serif;font-weight:700;text-transform:none;letter-spacing:0}
+  .btn-warn{background:rgba(220,60,60,.2);color:#ffb4b4;border:1px solid rgba(224,90,90,.5);font-family:'Segoe UI',sans-serif;font-weight:700;text-transform:none;letter-spacing:0}
+
+  /* ===== filtros ===== */
+  .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;align-items:center}
+  .controls input[type=search]{
+    flex:1 1 200px;padding:11px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.2);
+    background:rgba(255,255,255,.08);color:var(--branco);font-size:15px;outline:none;
+  }
+  .controls input::placeholder{color:var(--cinza)}
+  .controls select{
+    padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);
+    background:var(--azul-card);color:var(--branco);font-size:14px;outline:none;
+  }
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+  #moreNote{font-size:12.5px;color:var(--cinza);margin-bottom:12px;min-height:1px}
+  .chip{
+    padding:7px 13px;border-radius:99px;border:1px solid rgba(255,255,255,.2);cursor:pointer;
+    background:rgba(255,255,255,.07);color:var(--branco);font-size:13px;font-weight:700;transition:all .12s;
+  }
+  .chip.active{background:var(--amarelo);color:var(--azul);border-color:var(--amarelo)}
+
+  /* ===== cards de jogador ===== */
+  #cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:12px}
+  .card{
+    background:linear-gradient(150deg,var(--azul-card),#07214a 70%);
+    border:1px solid rgba(255,255,255,.12);border-left:5px solid var(--gc,var(--amarelo));
+    border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;position:relative;
+  }
+  .card.in{outline:2px solid var(--amarelo);box-shadow:0 0 18px rgba(255,223,0,.25)}
+  .card .row1{display:flex;gap:10px;align-items:center}
+  .avatar{
+    width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 35% 30%,#ffe95c,var(--amarelo) 75%);color:var(--azul);
+    font-family:'Arial Black',sans-serif;font-size:16px;border:3px solid var(--gc,var(--verde));overflow:hidden;
+  }
+  .avatar img,.shirt img.face{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+  .shirt img.face{position:absolute;inset:0}
+  .card .who{min-width:0}
+  .card .nm{font-weight:800;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .card .cl{font-size:12px;color:var(--cinza);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .badges{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+  .pos-badge{font-size:10.5px;font-weight:800;padding:2.5px 8px;border-radius:6px;background:var(--gc,#888);color:#04122b;text-transform:uppercase}
+  .pos-badge.sec{background:transparent;color:var(--gc,#ccc);border:1px solid var(--gc,#888)}
+  .age-badge{font-size:10.5px;font-weight:700;padding:2.5px 8px;border-radius:6px;background:rgba(255,255,255,.12)}
+  .star{font-size:11px;color:var(--amarelo);font-weight:700}
+  .stats{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:#cfe0f5}
+  .rating{
+    font-weight:800;font-size:12.5px;padding:3px 8px;border-radius:8px;background:var(--verde);color:#fff;
+  }
+  .rating.hot{background:var(--amarelo);color:var(--azul)}
+  .val{color:var(--amarelo);font-weight:700}
+  .card .btn{padding:9px;font-size:12.5px;border-radius:10px}
+  .btn-add{background:var(--verde-claro);color:#03210f}
+  .btn-cut{background:rgba(220,60,60,.85);color:#fff}
+  .empty-msg{grid-column:1/-1;text-align:center;color:var(--cinza);padding:40px 10px;font-size:15px}
+
+  /* ===== escalação ===== */
+  .lineup-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+  .banner{
+    width:100%;background:linear-gradient(90deg,rgba(255,223,0,.14),rgba(0,200,83,.12));
+    border:1px solid rgba(255,223,0,.4);border-radius:12px;padding:10px 14px;font-size:13.5px;line-height:1.45;
+  }
+  .banner b{color:var(--amarelo)}
+  #hintBar{width:100%;font-size:13px;color:var(--cinza);min-height:18px}
+  #hintBar b{color:var(--amarelo)}
+  .field-wrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+
+  #pitch{
+    position:relative;width:min(430px,94vw);aspect-ratio:68/98;flex:none;
+    background:repeating-linear-gradient(180deg,var(--verde-campo2) 0 10%,var(--verde-campo) 10% 20%);
+    border:3px solid rgba(255,255,255,.8);border-radius:12px;
+    box-shadow:inset 0 0 60px rgba(0,0,0,.35),0 10px 30px rgba(0,0,0,.45);
+    touch-action:none;overflow:visible;
+  }
+  .mark{position:absolute;border:2px solid rgba(255,255,255,.65);pointer-events:none}
+  .mark.half{left:0;right:0;top:50%;height:0;border-width:1px 0 0}
+  .mark.circle{left:50%;top:50%;width:27%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%)}
+  .mark.box{left:19%;right:19%;height:14%;border-top:none}
+  .mark.box.t{top:-2px;border-top:none;border-bottom:2px solid rgba(255,255,255,.65)}
+  .mark.box.b{bottom:-2px;border-bottom:none;border-top:2px solid rgba(255,255,255,.65)}
+  .mark.box.t,.mark.box.b{border-left:2px solid rgba(255,255,255,.65);border-right:2px solid rgba(255,255,255,.65)}
+  .mark.gbox{left:35%;right:35%;height:5.5%}
+  .mark.gbox.t{top:-2px;border:2px solid rgba(255,255,255,.65);border-top:none}
+  .mark.gbox.b{bottom:-2px;border:2px solid rgba(255,255,255,.65);border-bottom:none}
+
+  #slotLayer{position:absolute;inset:0}
+  .slot{position:absolute;transform:translate(-50%,-50%);width:0;height:0;overflow:visible}
+  .slot .drop{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    width:58px;height:58px;border-radius:50%;
+  }
+  .slot.hot .drop{background:rgba(255,223,0,.28);box-shadow:0 0 0 4px rgba(255,223,0,.55)}
+  .token{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;user-select:none;-webkit-user-select:none;touch-action:none}
+  .token.empty .shirt{
+    width:44px;height:44px;border-radius:50%;border:2px dashed rgba(255,255,255,.75);
+    display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:rgba(255,255,255,.85);
+    background:rgba(0,0,0,.18);
+  }
+  .token.filled{cursor:grab}
+  .token.filled .shirt{
+    width:46px;height:46px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ffe95c,var(--amarelo) 75%);
+    border:3px solid var(--gc,var(--verde));color:var(--azul);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Arial Black',sans-serif;font-size:14px;
+    box-shadow:0 4px 10px rgba(0,0,0,.45);position:relative;
+  }
+  .token.filled.gk .shirt{background:radial-gradient(circle at 35% 30%,#9be7ff,#4da3ff 75%)}
+  .token .tname{
+    font-size:10.5px;font-weight:800;background:rgba(4,20,45,.85);padding:2px 7px;border-radius:6px;
+    white-space:nowrap;max-width:86px;overflow:hidden;text-overflow:ellipsis;
+  }
+  .token.sel .shirt{outline:3px solid #fff;box-shadow:0 0 16px rgba(255,255,255,.8)}
+  .capbadge{
+    position:absolute;top:-6px;right:-8px;width:18px;height:18px;border-radius:50%;
+    background:var(--azul);color:var(--amarelo);font-size:11px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;border:2px solid var(--amarelo);
+  }
+  #ghost{
+    position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%);
+    display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.92;
+  }
+
+  /* banco */
+  #benchBox{
+    flex:1 1 260px;min-width:240px;max-width:430px;
+    background:rgba(0,39,118,.4);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px;
+  }
+  #benchBox h3{font-size:13px;color:var(--amarelo);margin-bottom:10px}
+  #bench{display:flex;flex-wrap:wrap;gap:10px}
+  .btok{
+    display:flex;flex-direction:column;align-items:center;gap:3px;width:64px;cursor:grab;
+    user-select:none;-webkit-user-select:none;touch-action:none;
+  }
+  .btok .shirt{
+    width:42px;height:42px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ffe95c,var(--amarelo) 75%);
+    border:3px solid var(--gc,var(--verde));color:var(--azul);
+    display:flex;align-items:center;justify-content:center;font-family:'Arial Black',sans-serif;font-size:13px;position:relative;
+  }
+  .btok.gk .shirt{background:radial-gradient(circle at 35% 30%,#9be7ff,#4da3ff 75%)}
+  .btok .bname{font-size:10px;font-weight:700;text-align:center;line-height:1.15;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .btok .bpos{font-size:9px;color:var(--cinza)}
+  .btok.sel .shirt{outline:3px solid #fff;box-shadow:0 0 14px rgba(255,255,255,.8)}
+  #bench .none{color:var(--cinza);font-size:12.5px}
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;justify-content:center}
+
+  /* toast + confetti */
+  #toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--amarelo);color:var(--azul);font-weight:800;font-size:14px;
+    padding:12px 20px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.5);
+    opacity:0;pointer-events:none;transition:all .25s;z-index:1000;max-width:92vw;text-align:center;
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:998}
+
+  /* ===== tela de compartilhamento ===== */
+  #shareModal{position:fixed;inset:0;z-index:1001;background:rgba(2,10,25,.82);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:18px}
+  .share-box{background:linear-gradient(160deg,#062a54,#043d26);border:1px solid rgba(255,255,255,.15);border-radius:18px;padding:18px 16px 16px;max-width:460px;width:100%;position:relative;margin:auto}
+  .share-box h2{color:var(--amarelo);font-size:18px;text-align:center;margin-bottom:12px}
+  .share-close{position:absolute;top:10px;right:12px;background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer}
+  .share-preview{position:relative;border-radius:12px;overflow:hidden;background:rgba(0,0,0,.25);min-height:120px;display:flex;align-items:center;justify-content:center}
+  #shareCanvas{width:100%;height:auto;display:block}
+  #shareSpinner{position:absolute;color:var(--cinza);font-size:14px}
+  .share-btns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+  .sbtn{display:flex;align-items:center;justify-content:center;gap:7px;border:none;border-radius:12px;padding:13px 10px;font-size:14px;font-weight:800;cursor:pointer;color:#fff;font-family:'Segoe UI',sans-serif}
+  .sbtn span{font-size:16px}
+  .sbtn.wa{background:#25d366;color:#053a1c}
+  .sbtn.ig{background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+  .sbtn.x{background:#000;border:1px solid #444}
+  .sbtn.dl{background:var(--amarelo);color:var(--azul)}
+  .sbtn.share{background:var(--verde-claro);color:#03210f}
+  .sbtn.copy{background:rgba(255,255,255,.14)}
+  .sbtn:active{transform:scale(.97)}
+  .share-tip{font-size:11.5px;color:var(--cinza);margin-top:12px;line-height:1.5;text-align:center}
+
+  footer{max-width:1180px;margin:30px auto 0;padding:0 20px;font-size:11.5px;color:var(--cinza);text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="crest">⚽</div>
+  <div>
+    <h1>Convocação da Seleção</h1>
+    <div class="sub">Copa do Mundo 2026 · monte a sua lista de 26 e escale o time</div>
+  </div>
+</header>
+
+<nav class="steps">
+  <button class="step active" id="step1">1 · Convocação <small>Escolha 26 jogadores (mín. 3 goleiros)</small></button>
+  <button class="step" id="step2">2 · Escalação <small>Arraste os jogadores para o campo</small></button>
+</nav>
+
+<!-- ============ ABA 1: CONVOCAÇÃO ============ -->
+<main id="tab1">
+  <section class="summary">
+    <div class="bignum"><span id="countBig">0</span><small>/26</small></div>
+    <div class="bar"><i id="barFill" style="width:0%"></i></div>
+    <div class="gcounts" id="gcounts"></div>
+    <button class="btn btn-go" id="btnFechar" disabled>Fechar convocação ✔</button>
+  </section>
+
+  <div class="controls">
+    <input type="search" id="q" placeholder="Buscar jogador ou clube…">
+    <select id="sortSel">
+      <option value="overall">Ordenar: melhores primeiro</option>
+      <option value="rating">Ordenar: melhor nota</option>
+      <option value="value">Ordenar: valor de mercado</option>
+      <option value="age">Ordenar: mais jovem</option>
+      <option value="name">Ordenar: nome A-Z</option>
+      <option value="pos">Ordenar: posição</option>
+    </select>
+    <select id="leagueSel"><option value="">Liga: todas</option></select>
+    <select id="clubSel"><option value="">Clube: todos</option></select>
+    <select id="ageSel">
+      <option value="">Idade: todas</option>
+      <option value="u21">Até 20 anos</option>
+      <option value="21-24">21 a 24 anos</option>
+      <option value="25-29">25 a 29 anos</option>
+      <option value="30-32">30 a 32 anos</option>
+      <option value="33">33+ anos</option>
+    </select>
+    <button class="btn btn-sec" id="btnClearFilters" style="padding:10px 14px">Limpar filtros</button>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div id="moreNote"></div>
+
+  <div id="cards"></div>
+</main>
+
+<!-- ============ ABA 2: ESCALAÇÃO ============ -->
+<main id="tab2" class="hidden">
+  <div class="lineup-head">
+    <div class="banner" id="cmpBanner"></div>
+    <div class="chips" id="formChips" style="margin:0"></div>
+    <button class="btn btn-sec" id="btnAuto">✨ Escalar automaticamente</button>
+    <button class="btn btn-sec" id="btnClearField">Limpar campo</button>
+    <div id="hintBar"></div>
+  </div>
+
+  <div class="field-wrap">
+    <div id="pitch">
+      <div class="mark half"></div>
+      <div class="mark circle"></div>
+      <div class="mark box t"></div><div class="mark gbox t"></div>
+      <div class="mark box b"></div><div class="mark gbox b"></div>
+      <div id="slotLayer"></div>
+    </div>
+    <aside id="benchBox">
+      <h3>🪑 Banco — arraste (ou toque) para escalar</h3>
+      <div id="bench"></div>
+    </aside>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-go" id="btnShareScreen">📸 Compartilhar convocação</button>
+    <button class="btn btn-sec" id="btnBack">← Mexer na convocação</button>
+    <button class="btn btn-warn" id="btnReset">🗑 Começar do zero</button>
+  </div>
+</main>
+
+<!-- ============ TELA DE COMPARTILHAMENTO ============ -->
+<div id="shareModal" class="hidden" role="dialog" aria-modal="true">
+  <div class="share-box">
+    <button class="share-close" id="btnCloseShare" aria-label="Fechar">✕</button>
+    <h2>Compartilhar convocação</h2>
+    <div class="share-preview">
+      <div id="shareSpinner">Gerando imagem… ⚽</div>
+      <canvas id="shareCanvas"></canvas>
+    </div>
+    <div class="share-btns">
+      <button class="sbtn wa"    id="sbWhats"><span>🟢</span> WhatsApp</button>
+      <button class="sbtn ig"    id="sbInsta"><span>📷</span> Instagram</button>
+      <button class="sbtn x"     id="sbX"><span>✖</span> X / Twitter</button>
+      <button class="sbtn dl"    id="sbDownload"><span>📥</span> Baixar imagem</button>
+      <button class="sbtn share" id="sbNative"><span>📲</span> Compartilhar…</button>
+      <button class="sbtn copy"  id="sbCopy"><span>📋</span> Copiar texto</button>
+    </div>
+    <p class="share-tip">No celular, use <b>Compartilhar…</b> para mandar a imagem direto pro app. No computador, baixe a imagem e anexe. O Instagram só aceita post pelo celular — baixe e publique por lá.</p>
+  </div>
+</div>
+
+<div id="toast"></div>
+<canvas id="confetti"></canvas>
+
+<footer>
+  Dica: toque duas vezes num jogador em campo para dar a braçadeira de capitão 🅲<br>
+  Dados de jogadores pesquisados em Transfermarkt, Sofascore e imprensa esportiva em <b>05/07/2026</b> —
+  estatísticas da temporada 2025-26 (Europa) ou 2025+2026 (Brasil).
+  Este app funciona sem internet e sem login — sua convocação fica salva só neste computador.
+</footer>
+
+<script>
+'use strict';
+/* ================== DADOS (pesquisados em 05/07/2026) ================== */
+const DATA = /*DATA_START*/[{"name":"Alisson","club":"Liverpool","league":"Premier League","age":33,"games":26,"cleanSheets":8,"marketValue":28,"recent":true,"position":"GOL","positions":[["GOL","PE","PD","MEI"]],"real":true,"eafc":89,"photo":"https://upload.wikimedia.org/wikipedia/commons/4/4f/Alisson_Becker_Brazil_V_Morocco_13_June_2026-117_%28cropped%29.jpg"},{"name":"Luiz Junior","club":"Villarreal CF","league":"La Liga","age":24,"games":28,"cleanSheets":8,"rating":7.08,"marketValue":15,"recent":false,"titles":[],"position":"GOL","positions":[["GOL","VOL","MEI"]],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/b7/Luiz_J%C3%BAnior_2023.png"},{"name":"Lucas Perri","club":"Leeds United","league":"Premier League","age":28,"games":16,"cleanSheets":3,"rating":6.43,"marketValue":14,"recent":false,"position":"GOL","positions":["GOL"],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/7/70/Lucas_Perri.jpg"},{"name":"Gabriel Brazão","club":"Santos","league":"Brasileirão Série A","age":25,"marketValue":12,"games":32,"recent":false,"position":"GOL","positions":[["GOL"]]},{"name":"Hugo Souza","club":"Corinthians","league":"Brasileirão Série A","age":27,"prevGames":40,"prevCleanSheets":18,"prevRating":7.03,"marketValue":11,"titles":["Copa do Brasil 2025"],"recent":true,"position":"GOL","positions":[["GOL"]],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/09/Hugo_Souza_2025_%28cropped%29.jpg"},{"name":"Bento","club":"Al-Nassr","league":"Saudi Pro League","age":27,"games":21,"cleanSheets":13,"marketValue":8,"recent":true,"titles":["Campeonato Saudita 2025-26"],"position":"GOL","positions":["GOL"],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/02/Esteghlal_F.C._v_Al_Nassr_FC%2C_3_March_2025_%28Bento_Matheus_Krepski%29.jpg"},{"name":"Léo Jardim","club":"Vasco da Gama","league":"Brasileirão Série A","age":31,"marketValue":7,"titles":[],"position":"GOL","positions":[["GOL"]]},{"name":"Carlos Miguel","club":"Palmeiras","league":"Brasileirão Série A","age":27,"marketValue":7,"games":17,"goals":0,"assists":0,"recent":false,"position":"GOL","positions":[["GOL"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/e/e9/Carlos-miguel-palmeiras-sport-ago-25-5.jpg"},{"name":"Pedro Morisco","club":"Coritiba","league":"Brasileirão Série A","age":22,"marketValue":5,"position":"GOL","positions":["GOL"]},{"name":"Cleiton","club":"RB Bragantino","league":"Brasileirão Série A","age":28,"marketValue":5,"titles":[],"position":"GOL","positions":[["GOL"]],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/f/f3/S%C3%A9rie_A1_Bragantino_1x0_Corinthians_%2852633087673%29.jpg"},{"name":"Renato Marin","club":"Paris Saint-Germain","league":"Ligue 1","age":19,"marketValue":4,"position":"GOL","positions":["GOL"],"eafc":68},{"name":"Mailson","club":"Al-Taawoun","league":"Saudi Pro League","age":29,"marketValue":3.8,"position":"GOL","positions":["GOL"],"eafc":75},{"name":"Anthoni","club":"Internacional","league":"Brasileirão Série A","age":24,"marketValue":3,"recent":false,"position":"GOL","positions":[["GOL"]],"eafc":73,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/8a/Anthoni_-_SCI_2025.png"},{"name":"Léo Linck","club":"Botafogo","league":"Brasileirão Série A","age":25,"marketValue":2.5,"recent":false,"position":"GOL","positions":[["GOL"]]},{"name":"Kauã Santos","club":"Eintracht Frankfurt","league":"Bundesliga","age":23,"games":16,"marketValue":2.5,"recent":false,"titles":[],"position":"GOL","positions":["GOL"],"eafc":71},{"name":"Lucas Arcanjo","club":"Vitória","league":"Brasileirão Série A","age":27,"marketValue":2.5,"position":"GOL","positions":[["GOL"]]},{"name":"Mycael","club":"Athletico-PR","league":"Brasileirão Série A","age":22,"marketValue":2,"position":"GOL","positions":[["GOL"]]},{"name":"Ronaldo","club":"Bahia","league":"Brasileirão Série A","age":29,"marketValue":2,"titles":["Copa do Nordeste 2025"],"position":"GOL","positions":[[["PD","PE","GOL"],"GOL"]],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/4/4e/B2ap3_large_diogowski.jpg"},{"name":"Gabriel Grando","club":"Grêmio","league":"Brasileirão Série A","age":26,"marketValue":1.5,"recent":false,"position":"GOL","positions":[["GOL"]],"eafc":75},{"name":"Ivan","club":"Remo","league":"Brasileirão Série A","age":29,"marketValue":1,"position":"GOL","positions":["GOL"],"photo":"https://upload.wikimedia.org/wikipedia/commons/9/98/Ivan_%28footballer%2C_born_1997%29_2022.jpg"},{"name":"Warleson","club":"Cercle Brugge","league":"Pro League (Bélgica)","age":29,"games":21,"goals":0,"assists":0,"prevGames":20,"prevGoals":0,"prevAssists":0,"marketValue":0.95,"recent":false,"position":"GOL","positions":["GOL"],"eafc":70},{"name":"Everson","club":"Atlético-MG","league":"Brasileirão Série A","age":35,"marketValue":0.9,"titles":["Vice-campeão Copa Sul-Americana 2025"],"position":"GOL","positions":[["GOL"]],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a2/16_11_2019_Partida_de_futebol_Santos_e_S%C3%A3o_Paulo_Everson.jpg"},{"name":"Samuel Portugal","club":"Al-Okhdood","league":"Saudi Pro League","age":32,"games":26,"marketValue":0.8,"position":"GOL","positions":["GOL"],"eafc":70},{"name":"Kewin","club":"Damac","league":"Saudi Pro League","age":31,"rating":6.78,"marketValue":0.8,"position":"GOL","positions":["GOL"],"eafc":72},{"name":"Jean","club":"Cerro Porteño","league":"Campeonato Paraguaio","age":30,"marketValue":0.55,"position":"GOL","positions":["GOL"],"eafc":70},{"name":"Brenno","club":"Fortaleza","league":"Brasileirão Série B","age":27,"marketValue":0.5,"recent":false,"position":"GOL","positions":["GOL"]},{"name":"Nícolas","club":"Pisa","league":"Serie A (Itália)","age":37,"games":6,"marketValue":0.5,"recent":false,"titles":[],"position":"GOL","positions":["GOL"]},{"name":"Rafael","club":"São Paulo","league":"Brasileirão Série A","age":37,"marketValue":0.4,"games":34,"recent":false,"position":"GOL","positions":[["GOL"]],"eafc":75},{"name":"João Ricardo","club":"Fortaleza","league":"Brasileirão Série B","age":37,"marketValue":0.3,"titles":[],"position":"GOL","positions":["GOL"]},{"name":"Charles","club":"Vitória de Guimarães","league":"Primeira Liga (Portugal)","age":32,"games":24,"prevGames":3,"marketValue":0.3,"titles":["Taça da Liga 2025-26"],"recent":false,"position":"GOL","positions":["GOL"],"eafc":68},{"name":"Lucas Anacker","club":"Levadiakos","league":"Super League (Grécia)","age":29,"games":10,"goals":0,"assists":0,"marketValue":0.3,"recent":false,"position":"GOL","positions":["GOL"]},{"name":"Victor Braga","club":"Al-Najma","league":"Saudi Pro League","age":34,"marketValue":0.275,"position":"GOL","positions":["GOL"],"eafc":70},{"name":"Cássio","club":"Cruzeiro","league":"Brasileirão Série A","age":39,"marketValue":0.25,"position":"GOL","positions":["GOL"]},{"name":"Walter","club":"Mirassol","league":"Brasileirão Série A","age":38,"marketValue":0.15,"titles":[],"position":"GOL","positions":["GOL"],"eafc":75,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/8b/Walter-Cuiaba-Palmeiras-jul-2022_%28cropped%29.jpg"},{"name":"Fábio","club":"Fluminense","league":"Brasileirão Série A","age":45,"marketValue":0.075,"games":34,"recent":false,"position":"GOL","positions":[["GOL"]]},{"name":"Phelipe Megiolaro","club":"Yokohama FC","league":"J-League (Japão)","position":"GOL","positions":["GOL"]},{"name":"Gabriel Batista","club":"CD Santa Clara","age":28,"league":"Primeira Liga (Portugal)","position":"GOL","positions":["GOL"],"eafc":73},{"name":"Paulo Victor","club":"Alanyaspor","league":"Süper Lig (Turquia)","age":39,"games":14,"goals":0,"titles":[],"position":"GOL","positions":["GOL"],"eafc":75},{"name":"Marcos Felipe","club":"Eyüpspor","league":"Süper Lig (Turquia)","age":30,"games":19,"goals":0,"titles":[],"position":"GOL","positions":["GOL"],"eafc":67},{"name":"Gabriel Souza","club":"CD Tondela","age":29,"league":"Primeira Liga (Portugal)","position":"GOL","positions":["GOL"],"eafc":65},{"name":"Kaique Pereira","club":"CD Nacional","age":23,"league":"Primeira Liga (Portugal)","position":"GOL","positions":["GOL"],"eafc":66},{"name":"Andrew","club":"Gil Vicente FC","age":24,"league":"Primeira Liga (Portugal)","position":"GOL","positions":["GOL"],"eafc":76},{"name":"Caio Secco","club":"Moreirense FC","age":35,"league":"Primeira Liga (Portugal)","position":"GOL","positions":["GOL"],"eafc":67},{"name":"Matheus Mendes","club":"FC Alverca","age":27,"league":"Primeira Liga (Portugal)","position":"GOL","positions":["GOL"],"eafc":68},{"name":"Rodrigo Moura","club":"Casa Pia AC","age":30,"league":"Primeira Liga (Portugal)","position":"GOL","positions":["GOL"],"eafc":69},{"name":"Rodolfo","club":"Central Español","league":"Campeonato Uruguaio","age":35,"position":"GOL","positions":["GOL"]},{"name":"Adriel","club":"AVS Futebol SAD","age":25,"league":"Primeira Liga (Portugal)","position":"GOL","positions":["GOL"],"eafc":66},{"name":"Renan Ribeiro","club":"CF Estrela Amadora","age":36,"league":"Primeira Liga (Portugal)","position":"GOL","positions":["GOL"],"eafc":69},{"name":"Marcelo Rangel","club":"Remo","league":"Brasileirão Série A","age":38,"position":"GOL","positions":["GOL"],"photo":"https://upload.wikimedia.org/wikipedia/commons/0/0a/Marcelo_Rangel.jpg"},{"name":"Tadeu","club":"Goiás","league":"Brasileirão Série B","age":37,"position":"GOL","positions":["GOL"]},{"name":"Rafael Santos","club":"Chapecoense","league":"Brasileirão Série A","age":37,"position":"GOL","positions":["GOL"],"eafc":69,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/bb/Rafael_Santos_2013.png"},{"name":"Wesley","club":"AS Roma","league":"Serie A (Itália)","age":22,"games":30,"goals":5,"assists":2,"rating":7.04,"marketValue":40,"recent":true,"titles":[],"position":"LD","positions":[[["LD","PD","PE"],"CA","PD"]],"eafc":79},{"name":"Vanderson","club":"AS Monaco","league":"Ligue 1","age":24,"games":14,"goals":0,"assists":2,"marketValue":30,"recent":true,"position":"LD","positions":["LD"],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/c/ca/Vanderson_asse_asm_2425.png"},{"name":"Yan Couto","club":"Borussia Dortmund","league":"Bundesliga","age":23,"games":17,"goals":1,"assists":3,"rating":7.09,"prevGames":21,"prevGoals":1,"prevAssists":5,"marketValue":20,"recent":false,"titles":[],"position":"LD","positions":["LD","PD"],"eafc":77},{"name":"Dodô","club":"Fiorentina","league":"Serie A (Itália)","age":27,"games":36,"goals":1,"assists":2,"prevGoals":1,"prevAssists":2,"rating":7.13,"marketValue":18,"recent":false,"titles":[],"position":"LD","positions":["LD"]},{"name":"Pedro Lima","club":"Wolverhampton Wanderers","league":"Premier League","age":19,"goals":0,"marketValue":8,"recent":false,"position":"LD","positions":["LD"],"eafc":68},{"name":"Matheuzinho","club":"Corinthians","league":"Brasileirão Série A","age":25,"prevGames":58,"marketValue":8,"titles":["Copa do Brasil 2025"],"recent":false,"position":"LD","positions":[[["LD","PD","MEI"],"LD"]],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/1/13/Matheuzinho_2026_%28cropped%29.jpg"},{"name":"Arthur","club":"Bayer Leverkusen","league":"Bundesliga","age":23,"games":31,"goals":2,"assists":3,"marketValue":7,"recent":false,"titles":["Bundesliga 2023","Copa da Alemanha 2024"],"position":"LD","positions":["LD"],"eafc":73},{"name":"Paulo Henrique","club":"Vasco da Gama","league":"Brasileirão Série A","age":29,"marketValue":6,"titles":[],"position":"LD","positions":[["LD"]],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/23/Paulo-Henrique-Juventude-Corinthians-jun-2022.jpg"},{"name":"Khellven","club":"CSKA Moscou","league":"Liga Russa","age":25,"goals":4,"assists":10,"rating":6.99,"marketValue":6,"position":"LD","positions":[[["LD","PD"],"LD","PD"]],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/c/cd/Khellven-palmeiras-sport-ago-25-3_%28cropped%29.jpg"},{"name":"Vinicius Tobias","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":22,"games":28,"goals":2,"assists":1,"rating":7.02,"marketValue":6,"titles":["Copa da Ucrânia 2024","Copa da Ucrânia 2025"],"position":"LD","positions":[["LD","ZAG"]],"real":true,"eafc":70},{"name":"Bruno Gomes","club":"Internacional","league":"Brasileirão Série A","age":25,"marketValue":6,"recent":false,"position":"LD","positions":[["LD","VOL","MEI"]],"eafc":75,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/84/Bruno_Gomes_-_Internacional_2024.png"},{"name":"Emerson Royal","club":"Flamengo","league":"Brasileirão Série A","age":27,"marketValue":5,"games":8,"goals":0,"assists":1,"recent":false,"position":"LD","positions":[["LD","ZAG"]],"eafc":72,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Emerson_Royal_%28cropped%29.webp/330px-Emerson_Royal_%28cropped%29.webp.png"},{"name":"Lucas Rosa","club":"Ajax","league":"Eredivisie","age":26,"games":29,"goals":0,"assists":1,"rating":6.8,"marketValue":5,"recent":false,"position":"LD","positions":["LD","LE"],"eafc":71},{"name":"Gustavo Mantuan","club":"Zenit","league":"Liga Russa","age":25,"marketValue":5,"titles":["Campeonato Russo 2024-25"],"position":"LD","positions":["LD","PD","PE"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/23/Gustavo_Mantuan_2024.jpg"},{"name":"JP Chermont","club":"Coritiba","league":"Brasileirão Série A","age":20,"marketValue":4,"position":"LD","positions":["LD"],"eafc":68,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/20/Equality_Cup_2024%2C_Zenit_-_Santos_01_-_JP_Chermont.jpg"},{"name":"Igor Silva","club":"FC Lorient","league":"Ligue 1","age":28,"games":17,"goals":1,"assists":0,"marketValue":3,"position":"LD","positions":["LD"],"eafc":70},{"name":"Calegari","club":"Eyüpspor","league":"Süper Lig (Turquia)","age":24,"games":22,"goals":1,"assists":2,"marketValue":3,"titles":[],"position":"LD","positions":["LD"],"eafc":69},{"name":"William","club":"Cruzeiro","league":"Brasileirão Série A","age":31,"marketValue":3,"position":"LD","positions":["LD"],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/bc/William_de_Asevedo_Furtado%2C_2019_at_Wolfsburg.jpeg"},{"name":"Maílton","club":"Fortaleza","league":"Brasileirão Série B","age":28,"marketValue":2.3,"titles":[],"position":"LD","positions":[[["LD"],"LD","LE"]]},{"name":"Gilberto","club":"Athletico-PR","league":"Brasileirão Série A","age":33,"marketValue":2.2,"position":"LD","positions":["LD"],"eafc":66,"photo":"https://upload.wikimedia.org/wikipedia/commons/7/7e/GilbertoBenfica2020.jpg"},{"name":"Igor Vinícius","club":"Santos","league":"Brasileirão Série A","age":29,"marketValue":2,"games":18,"recent":false,"position":"LD","positions":["LD"]},{"name":"Guga","club":"Fluminense","league":"Brasileirão Série A","age":27,"marketValue":2,"recent":false,"position":"LD","positions":["LD"],"eafc":75},{"name":"Guilherme Siqueira","club":"Sheffield Wednesday","league":"Championship (Inglaterra)","age":22,"marketValue":2,"recent":false,"position":"LD","positions":["LD"],"eafc":55},{"name":"Igor Formiga","club":"Mirassol","league":"Brasileirão Série A","age":27,"marketValue":2,"titles":[],"position":"LD","positions":[["LD"]]},{"name":"João Lucas","club":"Remo","league":"Brasileirão Série A","age":28,"marketValue":1.5,"position":"LD","positions":["LD"]},{"name":"Gustavo Garcia","club":"FC Famalicão","league":"Primeira Liga (Portugal)","age":24,"marketValue":1.5,"titles":[],"recent":false,"position":"LD","positions":["LD"],"eafc":72},{"name":"Gustavo Ferrareis","club":"Atlas","league":"Liga MX (México)","age":30,"marketValue":1.2,"recent":false,"position":"LD","positions":[["LD","PD","MEI","ZAG"]],"eafc":71},{"name":"Rodinei","club":"Olympiacos","league":"Super League (Grécia)","age":34,"games":24,"goals":4,"assists":3,"rating":7.45,"marketValue":1,"titles":["Conference League 2024","Super League Grécia 2025","Copa da Grécia 2024","Supercopa da Grécia 2023"],"recent":false,"position":"LD","positions":["LD","ZAG"],"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/d/d1/Rodinei_Marcelo_de_Almeida.jpg"},{"name":"Renan Guedes","club":"NK Osijek","league":"Outras ligas","age":27,"games":8,"goals":0,"assists":0,"rating":7,"marketValue":0.35,"recent":false,"position":"LD","positions":[["LD","ZAG"]],"eafc":65},{"name":"Marcos Rocha","club":"Grêmio","league":"Brasileirão Série A","age":37,"marketValue":0.2,"position":"LD","positions":["LD"],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/e/e3/Marcos-Rocha-Palmeiras-Sao-Paulo-ago24.jpg"},{"name":"Lucas Taylor","club":"Polissya Zhytomyr","league":"Liga Ucraniana","age":31,"marketValue":0.2,"position":"LD","positions":[["LD","MEI","VOL"]]},{"name":"Igor Serrote","club":"Al Jazira","league":"Outras ligas","age":21,"position":"LD","positions":["LD"],"eafc":70},{"name":"Bebeto","club":"CD Tondela","age":36,"league":"Primeira Liga (Portugal)","position":"LD","positions":["LD"],"eafc":70},{"name":"Jordan","club":"Zorya Luhansk","league":"Liga Ucraniana","age":27,"recent":false,"position":"LD","positions":["LD","ZAG"]},{"name":"Hevertton","club":"Gil Vicente FC","age":25,"league":"Primeira Liga (Portugal)","position":"LD","positions":["LD"],"eafc":68},{"name":"Fernando Costanza","club":"Krylia Sovetov","league":"Liga Russa","age":27,"position":"LD","positions":["LD"],"eafc":59},{"name":"Cláudio Winck","club":"Kasımpaşa","league":"Süper Lig (Turquia)","age":31,"games":27,"goals":3,"titles":[],"position":"LD","positions":["LD"]},{"name":"Carlos Augusto","club":"Inter de Milão","league":"Serie A (Itália)","age":27,"games":34,"goals":1,"assists":1,"rating":6.91,"marketValue":26,"recent":false,"titles":["Serie A 2025-26","Coppa Italia 2025-26"],"position":"LE","positions":["LE","ZAG","PE"],"eafc":81,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/27/FC_Salzburg_gegen_Inter_Mailand_%28UEFA_Championsleague_2023-11-08%29_15.jpg"},{"name":"Caio Henrique","club":"AS Monaco","league":"Ligue 1","age":28,"games":22,"goals":0,"assists":2,"marketValue":18,"position":"LE","positions":["LE"],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a2/Caio_asse_asm_2425.png"},{"name":"Mauro Júnior","club":"PSV Eindhoven","league":"Eredivisie","age":27,"games":26,"goals":1,"assists":2,"rating":7,"prevGames":25,"prevGoals":0,"prevAssists":6,"prevRating":7.2,"titles":["Eredivisie 2024","Eredivisie 2025","Eredivisie 2026"],"marketValue":18,"recent":false,"position":"LE","positions":["LE","VOL","MEI","PE"]},{"name":"Abner","club":"Olympique Lyonnais","league":"Ligue 1","age":25,"games":26,"goals":3,"assists":2,"marketValue":14,"position":"LE","positions":["LE"],"eafc":75},{"name":"Luciano Juba","club":"Bahia","league":"Brasileirão Série A","age":26,"marketValue":14,"goals":7,"assists":8,"games":63,"titles":["Copa do Nordeste 2025","Campeonato Baiano 2025"],"position":"LE","positions":[["LE","PE"]],"eafc":75},{"name":"Renan Lodi","club":"Atlético-MG","league":"Brasileirão Série A","age":28,"marketValue":11,"assists":2,"prevGames":24,"prevGoals":3,"prevAssists":7,"recent":false,"position":"LE","positions":[["LE"]],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/84/ATL-Madrid-Lokomotiv001-Lodi.jpg"},{"name":"Cuiabano","club":"Vasco da Gama","league":"Brasileirão Série A","age":23,"marketValue":10,"titles":[],"position":"LE","positions":[["LE","PE"]],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/22/Cuiabano_Botafogo_2025.jpg"},{"name":"Juninho Capixaba","club":"RB Bragantino","league":"Brasileirão Série A","age":29,"marketValue":8,"goals":3,"assists":2,"titles":[],"position":"LE","positions":[["LE"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/4/43/S%C3%A9rie_A1_Bragantino_1x0_Corinthians_%2852632089637%29.jpg"},{"name":"Pedro Henrique","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":23,"games":29,"goals":1,"assists":6,"rating":7.18,"marketValue":8,"titles":["Copa da Ucrânia 2024","Copa da Ucrânia 2025"],"position":"LE","positions":[[[["LE","ZAG"],"ZAG","LD"],"ZAG"]],"eafc":72},{"name":"Welington","club":"Southampton","league":"Championship (Inglaterra)","age":24,"games":18,"goals":0,"assists":0,"marketValue":8,"recent":false,"position":"LE","positions":["LE"],"eafc":72},{"name":"Rubens","club":"Dinamo Moscou","league":"Liga Russa","age":25,"marketValue":8,"position":"LE","positions":["LE"],"eafc":74},{"name":"Douglas Santos","club":"Zenit","league":"Liga Russa","age":32,"games":22,"goals":1,"marketValue":7.5,"recent":true,"titles":["Campeonato Russo 2024-25"],"position":"LE","positions":["LE"],"real":true,"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a3/Douglas_Santos_Brazil_V_Morocco_13_June_2026-87_%28cropped%29.jpg"},{"name":"Matheus Bidu","club":"Corinthians","league":"Brasileirão Série A","age":27,"marketValue":7,"recent":false,"titles":["Copa do Brasil 2025","Campeonato Paulista 2025"],"position":"LE","positions":[["LE"]],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/3/34/Matheus_Bidu_2025.jpg"},{"name":"Guilherme Arana","club":"Fluminense","league":"Brasileirão Série A","age":29,"marketValue":6,"games":28,"recent":true,"position":"LE","positions":[["LE"]],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/1/18/Guilherme_Arana_2017.jpg"},{"name":"Lucas Piton","club":"Vasco da Gama","league":"Brasileirão Série A","age":25,"marketValue":6,"titles":[],"position":"LE","positions":[["LE"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/88/Lucas-Piton-Corinthians-jul-2022.jpg"},{"name":"Lucas Pires","club":"Burnley","league":"Premier League","age":25,"games":20,"goals":0,"assists":0,"marketValue":6,"recent":false,"position":"LE","positions":["LE"],"eafc":74},{"name":"Natanael","club":"Atlético-MG","league":"Brasileirão Série A","age":24,"marketValue":4.5,"recent":false,"position":"LE","positions":[["LE","LD"]],"eafc":72,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/b4/Natanael_-_Brasileir%C3%A3o_S%C3%A9rie_A-_Bragantino_4_x_2_Coritiba_-_52151863841_%28cropped%29.jpg"},{"name":"Neto Borges","club":"Bristol City","league":"Championship (Inglaterra)","age":29,"goals":0,"assists":3,"rating":7.08,"marketValue":4,"recent":false,"position":"LE","positions":["LE"],"eafc":71},{"name":"Ayrton Lucas","club":"Flamengo","league":"Brasileirão Série A","age":29,"marketValue":4,"games":9,"goals":0,"assists":1,"recent":false,"titles":["Libertadores 2025"],"position":"LE","positions":[["LE"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/7/71/Ayrton_Lucas_2019_vs_Rubin.jpg"},{"name":"Jefté","club":"Palmeiras","league":"Brasileirão Série A","age":22,"marketValue":4,"games":7,"goals":0,"assists":1,"recent":false,"position":"LE","positions":[["LE"]]},{"name":"Moises","club":"CSKA Moscou","league":"Liga Russa","age":31,"marketValue":4,"position":"LE","positions":["LE"],"eafc":78},{"name":"Vinicius Lira","club":"Santos","league":"Brasileirão Série A","age":18,"marketValue":4,"recent":false,"position":"LE","positions":["LE"],"real":true,"eafc":64,"photo":"https://upload.wikimedia.org/wikipedia/commons/e/e4/Vinicius_Lira_12-09-2025.png"},{"name":"Iago","club":"Bahia","league":"Brasileirão Série A","age":29,"marketValue":3.5,"recent":false,"position":"LE","positions":[["LE"]],"eafc":74},{"name":"Vanderlan","club":"RB Bragantino","league":"Brasileirão Série A","age":23,"marketValue":3,"titles":[],"position":"LE","positions":[["LE"]],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/1/1f/Vanderlan-Palmeiras-Liverpool-abr24.jpg"},{"name":"Matheus Bahia","club":"Internacional","league":"Brasileirão Série A","age":26,"marketValue":3,"position":"LE","positions":["LE"],"eafc":73},{"name":"Luan Cândido","club":"Vitória","league":"Brasileirão Série A","age":25,"marketValue":3,"position":"LE","positions":[["LE","ZAG"]]},{"name":"Esquerdinha","club":"Queens Park Rangers","league":"Championship (Inglaterra)","age":23,"games":16,"goals":0,"assists":0,"marketValue":3,"recent":false,"position":"LE","positions":["LE"],"eafc":56},{"name":"Kaiki","club":"Cruzeiro","league":"Brasileirão Série A","age":26,"marketValue":3,"games":16,"goals":0,"assists":2,"recent":false,"position":"LE","positions":["LE"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/29/Kaiki-3.png"},{"name":"Alex Telles","club":"Botafogo","league":"Brasileirão Série A","age":33,"marketValue":2.8,"games":15,"goals":2,"assists":2,"recent":false,"position":"LE","positions":[["LE"]],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/28/Alex_Telles_2018.jpg"},{"name":"Matheus Reis","club":"CSKA Moscow","league":"Primeira Liga (Portugal)","age":31,"games":9,"goals":0,"assists":0,"marketValue":2.5,"titles":["Primeira Liga 2024-25","Taça de Portugal 2024-25","Supertaça 2024"],"recent":false,"position":"LE","positions":[["LE","ZAG"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/0c/MatheusReis2021.png"},{"name":"Léo Derik","club":"Athletico-PR","league":"Brasileirão Série A","age":20,"marketValue":2.5,"position":"LE","positions":["LE"]},{"name":"Rogério","club":"VfL Wolfsburg","league":"Bundesliga","age":28,"marketValue":2.5,"recent":false,"titles":[],"position":"LE","positions":["LE"]},{"name":"Caio Paulista","club":"Grêmio","league":"Brasileirão Série A","age":28,"marketValue":2,"recent":false,"position":"LE","positions":[["LE","PE"]],"eafc":72,"photo":"https://upload.wikimedia.org/wikipedia/commons/c/ca/Caio-PaulistaPalmeiras-Sao-Paulo-ago24.jpg"},{"name":"Felipe Jonatan","club":"Coritiba","league":"Brasileirão Série A","age":28,"marketValue":2,"position":"LE","positions":["LE"]},{"name":"Lucas Esteves","club":"Atlético San Luis","league":"Liga MX (México)","age":25,"goals":0,"assists":0,"marketValue":1.5,"recent":false,"position":"LE","positions":[["LE"]],"eafc":69},{"name":"Wendell","club":"São Paulo","league":"Brasileirão Série A","age":32,"marketValue":1.5,"recent":false,"position":"LE","positions":[[["LE","ZAG"],"LE"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/7/73/Wendell.jpg"},{"name":"Paulo Azzi","club":"Monza","league":"Serie B (Itália)","age":31,"games":34,"goals":5,"marketValue":1.5,"recent":false,"titles":[],"position":"LE","positions":["LE","MEI"],"eafc":71},{"name":"Alex Sandro","club":"Flamengo","league":"Brasileirão Série A","age":35,"marketValue":1,"recent":true,"titles":["Libertadores 2025","Brasileirão 2025","Campeonato Carioca 2025","Supercopa do Brasil 2025"],"position":"LE","positions":[["LE","ZAG"]],"real":true,"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/d/dd/Alex_Sandro_Brazil_V_Morocco_13_June_2026-68.jpg"},{"name":"Jean Carlos Silva","club":"Raków Częstochowa","league":"Outras ligas","age":30,"marketValue":1,"recent":false,"position":"LE","positions":["LE"],"eafc":69},{"name":"Capixaba","club":"Shimizu S-Pulse","league":"J-League (Japão)","marketValue":0.7,"position":"LE","positions":[["LE","PE"]]},{"name":"Thiago Borges","club":"Kryvbas Kryvyi Rih","league":"Liga Ucraniana","age":21,"marketValue":0.4,"position":"LE","positions":[["LE","ZAG"]]},{"name":"Reinaldo","club":"Mirassol","league":"Brasileirão Série A","age":36,"goals":13,"assists":6,"games":33,"marketValue":0.35,"recent":false,"position":"LE","positions":[["LE"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/4/42/16_11_2019_Partida_de_futebol_Santos_e_S%C3%A3o_Paulo_Reinaldo.jpg"},{"name":"César Nunes","club":"Central Español","league":"Campeonato Uruguaio","age":26,"marketValue":0.3,"position":"LE","positions":["LE"]},{"name":"Vitor Vargas","club":"Al-Najma","league":"Saudi Pro League","age":22,"marketValue":0.15,"position":"LE","positions":["LE"]},{"name":"Marquinhos Cipriano","club":"FC Sion","league":"Outras ligas","age":27,"marketValue":0.15,"recent":false,"position":"LE","positions":["LE","PE"],"real":true,"eafc":65},{"name":"Guilherme","club":"Konyaspor","league":"Süper Lig (Turquia)","age":36,"games":22,"goals":0,"titles":[],"position":"LE","positions":[["LE","MEI","VOL"]],"eafc":76},{"name":"Weverson","club":"Gil Vicente FC","age":25,"league":"Primeira Liga (Portugal)","position":"LE","positions":["LE"],"eafc":70},{"name":"Paulo Otávio","club":"Al-Sadd","league":"Outras ligas","age":30,"position":"LE","positions":["LE"]},{"name":"Lucas Mendes","club":"Al-Wakrah","league":"Outras ligas","age":36,"position":"LE","positions":["LE","ZAG"],"eafc":68},{"name":"Gabriel Magalhães","club":"Arsenal","league":"Premier League","age":28,"games":32,"goals":3,"assists":4,"cleanSheets":17,"marketValue":65,"titles":["Premier League 2025-26"],"recent":true,"position":"ZAG","positions":["ZAG"],"real":true},{"name":"Murillo","club":"Nottingham Forest","league":"Premier League","age":23,"games":25,"goals":1,"assists":0,"marketValue":45,"recent":true,"position":"ZAG","positions":["ZAG"],"eafc":82,"photo":"https://upload.wikimedia.org/wikipedia/commons/d/d7/Murillo_and_Tony_Loughlan_22122025_%281%29_%28Murillo_Santiago_Costa_dos_Santos%29.jpg"},{"name":"Eder Militao","club":"Real Madrid","league":"La Liga","age":28,"games":24,"goals":2,"recent":true,"marketValue":40,"titles":["Supercopa da Europa 2024"],"position":"ZAG","positions":["ZAG","LD"],"eafc":84,"photo":"https://upload.wikimedia.org/wikipedia/commons/3/38/Eder_Militao_2021.jpg"},{"name":"Bremer","club":"Juventus","league":"Serie A (Itália)","age":29,"games":26,"goals":4,"assists":3,"rating":7.3,"marketValue":35,"recent":true,"titles":[],"position":"ZAG","positions":["ZAG"],"real":true,"eafc":86,"photo":"https://upload.wikimedia.org/wikipedia/commons/9/9a/Bremer_Brazil_V_Morocco_13_June_2026-143_%28cropped%29.jpg"},{"name":"Lucas Beraldo","club":"Paris Saint-Germain","league":"Ligue 1","age":22,"games":20,"goals":2,"assists":1,"marketValue":30,"titles":["Champions League 2024-25","Champions League 2025-26","Ligue 1 2023-24","Ligue 1 2024-25","Ligue 1 2025-26","Copa da França 2023-24","Copa da França 2024-25","Supercopa da França 2023, 2024, 2025","Supercopa da UEFA 2025","Copa Intercontinental FIFA 2025"],"recent":true,"position":"ZAG","positions":["ZAG","VOL"],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Beraldo_asse_psg_2425.png/330px-Beraldo_asse_psg_2425.png"},{"name":"Vitor Reis","club":"Girona FC","league":"La Liga","age":20,"games":32,"goals":1,"assists":1,"marketValue":22,"recent":true,"titles":["Melhor Sub-23 do mês La Liga (jan/2026)"],"position":"ZAG","positions":["ZAG","VOL"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Vitor-Reis-Palmeiras-Sao-Paulo-ago24.jpg/330px-Vitor-Reis-Palmeiras-Sao-Paulo-ago24.jpg"},{"name":"Alexsandro Ribeiro","club":"Lille OSC","league":"Ligue 1","age":26,"games":9,"goals":0,"assists":0,"marketValue":20,"position":"ZAG","positions":["ZAG"],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Alessandro_ASSE_losc_2425_%28cropped%29.jpg/330px-Alessandro_ASSE_losc_2425_%28cropped%29.jpg"},{"name":"Morato","club":"Nottingham Forest","league":"Premier League","age":24,"games":21,"goals":1,"assists":0,"marketValue":18,"recent":false,"position":"ZAG","positions":["ZAG"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Morato_2020.jpg/330px-Morato_2020.jpg"},{"name":"Roger Ibañez","club":"Al-Ahli","league":"Saudi Pro League","age":27,"goals":2,"assists":2,"rating":7.31,"marketValue":18,"titles":["AFC Champions League Elite 2025","AFC Champions League Elite 2026"],"position":"ZAG","positions":["ZAG"],"real":true},{"name":"Natan","club":"Real Betis","league":"La Liga","age":25,"games":30,"goals":1,"marketValue":18,"recent":false,"titles":[],"position":"ZAG","positions":["ZAG","LE"],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/S%C3%A9rie_A1_Bragantino_1x0_Corinthians_%2852632859764%29_-_Natan.jpg/330px-S%C3%A9rie_A1_Bragantino_1x0_Corinthians_%2852632859764%29_-_Natan.jpg"},{"name":"Jair Cunha","club":"Nottingham Forest","league":"Premier League","age":20,"games":23,"goals":0,"assists":0,"marketValue":15,"recent":false,"position":"ZAG","positions":["ZAG"],"eafc":74},{"name":"Léo Pereira","club":"Flamengo","league":"Brasileirão Série A","age":30,"marketValue":12,"goals":6,"games":56,"recent":true,"titles":["Libertadores 2025","Brasileirão 2025","Campeonato Carioca 2025","Supercopa do Brasil 2025"],"position":"ZAG","positions":[["ZAG"]],"real":true},{"name":"Fabrício Bruno","club":"Cruzeiro","league":"Brasileirão Série A","age":30,"marketValue":12,"games":17,"goals":0,"assists":0,"recent":false,"position":"ZAG","positions":[["ZAG"]]},{"name":"Diego Costa","club":"Krasnodar","league":"Liga Russa","age":26,"marketValue":12,"titles":["Campeonato Russo 2024-25"],"position":"ZAG","positions":["ZAG"]},{"name":"Léo Ortiz","club":"Flamengo","league":"Brasileirão Série A","age":30,"marketValue":12,"goals":4,"assists":2,"games":56,"recent":true,"titles":["Libertadores 2025","Brasileirão 2025","Campeonato Carioca 2025","Supercopa do Brasil 2025"],"position":"ZAG","positions":[["ZAG","VOL"]]},{"name":"Nino","club":"Zenit","league":"Liga Russa","age":29,"marketValue":10,"titles":["Campeonato Russo 2024-25"],"position":"ZAG","positions":["ZAG"],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Nino_in_Zenit_2025.jpg/330px-Nino_in_Zenit_2025.jpg"},{"name":"Robert Renan","club":"Vasco da Gama","league":"Brasileirão Série A","age":22,"marketValue":10,"titles":[],"position":"ZAG","positions":[["ZAG"]],"eafc":75,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/2f/Robert_Renan_in_Zenit_%28cropped%29.jpg"},{"name":"Vitor Tormena","club":"Krasnodar","league":"Liga Russa","age":30,"marketValue":8,"titles":["Campeonato Russo 2024-25"],"position":"ZAG","positions":["ZAG"],"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/V%C3%ADtor_Tormena_2024.jpg/330px-V%C3%ADtor_Tormena_2024.jpg"},{"name":"Jonathan Jesus","club":"Cruzeiro","league":"Brasileirão Série A","age":22,"marketValue":8,"games":10,"goals":0,"assists":0,"recent":false,"position":"ZAG","positions":[["ZAG"]],"eafc":72},{"name":"Igor Julio","club":"Brighton \u0026 Hove Albion","league":"Premier League","age":28,"games":4,"goals":0,"assists":0,"marketValue":8,"recent":false,"position":"ZAG","positions":["ZAG","LE"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/FC_Liefering_gegen_SV_Horn_%2822._Juli_2016%29_50.jpg/330px-FC_Liefering_gegen_SV_Horn_%2822._Juli_2016%29_50.jpg"},{"name":"Joaquim","club":"Tigres UANL","league":"Liga MX (México)","age":27,"games":43,"goals":5,"assists":1,"prevGames":41,"prevGoals":2,"prevAssists":1,"marketValue":7,"titles":["Brasileirão Série B 2023"],"recent":false,"position":"ZAG","positions":[["ZAG"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Joaquim-Henrique-Cuiaba-Palmeiras-jul-2022.jpg/330px-Joaquim-Henrique-Cuiaba-Palmeiras-jul-2022.jpg"},{"name":"David Ricardo","club":"Dinamo Moscou","league":"Liga Russa","age":23,"marketValue":6,"position":"ZAG","positions":["ZAG"],"eafc":74},{"name":"Gabriel Pereira","club":"FC Copenhagen","league":"Outras ligas","age":25,"games":26,"goals":1,"assists":1,"marketValue":6,"titles":["Superliga Dinamarquesa 2024-25","Taça da Dinamarca 2024-25"],"recent":false,"position":"ZAG","positions":[[["ZAG"],"PD","MEI","PE"]],"eafc":74},{"name":"Otávio","club":"Paris FC","league":"Ligue 1","age":23,"games":23,"goals":1,"assists":0,"marketValue":6,"position":"ZAG","positions":["ZAG"]},{"name":"Bernardo","club":"TSG Hoffenheim","league":"Bundesliga","age":31,"games":27,"goals":0,"assists":0,"marketValue":5.5,"recent":false,"titles":[],"position":"ZAG","positions":["ZAG","LE"],"eafc":75},{"name":"Gustavo Marques","club":"RB Bragantino","league":"Brasileirão Série A","age":24,"marketValue":5,"titles":[],"position":"ZAG","positions":[["ZAG"]],"eafc":75},{"name":"Lucas Fasson","club":"Lokomotiv Moscou","league":"Liga Russa","age":25,"marketValue":5,"position":"ZAG","positions":["ZAG"],"eafc":75},{"name":"Willyan Rocha","club":"CSKA Moscou","league":"Liga Russa","age":31,"marketValue":5,"position":"ZAG","positions":["ZAG"]},{"name":"Victor Gabriel","club":"Internacional","league":"Brasileirão Série A","age":22,"marketValue":5,"recent":false,"position":"ZAG","positions":[["ZAG"]],"eafc":73},{"name":"Arthur Chaves","club":"FC Augsburg","league":"Bundesliga","age":25,"games":26,"goals":2,"assists":0,"prevGames":34,"prevGoals":2,"prevAssists":0,"marketValue":5,"recent":false,"titles":[],"position":"ZAG","positions":["ZAG","LD"],"eafc":74},{"name":"Murilo","club":"Palmeiras","league":"Brasileirão Série A","age":29,"marketValue":5,"games":15,"goals":1,"assists":1,"recent":false,"position":"ZAG","positions":[[["PD","PE","ZAG"],"ZAG"]],"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Murilo-Palmeiras-Jacuipense-abr26.jpg/330px-Murilo-Palmeiras-Jacuipense-abr26.jpg"},{"name":"Lyanco","club":"Atlético-MG","league":"Brasileirão Série A","age":29,"marketValue":4.5,"recent":false,"position":"ZAG","positions":[["ZAG"]],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Lyanco_Evangelista_Silveira_Neves_Vojnovi%C4%87_2017.jpg/330px-Lyanco_Evangelista_Silveira_Neves_Vojnovi%C4%87_2017.jpg"},{"name":"Lucas Veríssimo","club":"Santos","league":"Brasileirão Série A","age":31,"marketValue":4.5,"recent":false,"position":"ZAG","positions":[["ZAG"]]},{"name":"Tchoca","club":"Corinthians","league":"Brasileirão Série A","age":22,"marketValue":4,"recent":false,"position":"ZAG","positions":["ZAG"],"eafc":70},{"name":"Diego Carlos","club":"Como","league":"Serie A (Itália)","age":33,"games":27,"marketValue":4,"recent":false,"titles":[],"position":"ZAG","positions":["ZAG"],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/5/5a/Diego_Carlos_2020_%28cropped%29.jpg"},{"name":"Gustavo Martins","club":"Grêmio","league":"Brasileirão Série A","age":23,"marketValue":4,"recent":false,"position":"ZAG","positions":[["ZAG"]],"eafc":72},{"name":"Bruno Fuchs","club":"Palmeiras","league":"Brasileirão Série A","age":27,"marketValue":4,"titles":["Campeonato Paulista 2026"],"position":"ZAG","positions":["ZAG"],"eafc":75,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/Bruno-Fuchs-Palmeiras-Jacuipense-abr26.jpg/330px-Bruno-Fuchs-Palmeiras-Jacuipense-abr26.jpg"},{"name":"Adryelson","club":"Al Wasl","league":"Outras ligas","age":28,"marketValue":4,"titles":["Copa Libertadores 2024 (Botafogo)","Campeonato Brasileiro Série A 2024 (Botafogo)"],"position":"ZAG","positions":[["ZAG"]]},{"name":"Nathan Silva","club":"Pumas UNAM","league":"Liga MX (México)","age":29,"goals":1,"assists":1,"marketValue":3.5,"recent":false,"position":"ZAG","positions":[["ZAG"]],"eafc":71},{"name":"Luiz Felipe","club":"Rayo Vallecano","league":"La Liga","age":29,"games":20,"marketValue":3.5,"recent":false,"titles":[],"position":"ZAG","positions":["ZAG"],"eafc":75},{"name":"Wagner Leonardo","club":"Grêmio","league":"Brasileirão Série A","age":26,"marketValue":3,"recent":false,"position":"ZAG","positions":[["ZAG"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Wagner_Leonardo_-_Campeonato_Paulista_Sub20-_S%C3%A3o_Caetano_2_x_1_Santos_FC_-_48105523391_%28cropped%29.jpg/330px-Wagner_Leonardo_-_Campeonato_Paulista_Sub20-_S%C3%A3o_Caetano_2_x_1_Santos_FC_-_48105523391_%28cropped%29.jpg"},{"name":"Arthur Dias","club":"Athletico-PR","league":"Brasileirão Série A","age":19,"marketValue":3,"position":"ZAG","positions":["ZAG"]},{"name":"Kanu","club":"Bahia","league":"Brasileirão Série A","age":29,"marketValue":3,"titles":["Copa do Nordeste 2025","Campeonato Baiano 2025"],"position":"ZAG","positions":[["ZAG"]],"eafc":74},{"name":"Robson Bambu","club":"Atlético San Luis","league":"Liga MX (México)","age":28,"games":18,"goals":0,"assists":1,"marketValue":2.6,"recent":false,"position":"ZAG","positions":[["ZAG"]],"eafc":72},{"name":"Jacy","club":"Coritiba","league":"Brasileirão Série A","age":28,"marketValue":2.5,"position":"ZAG","positions":["ZAG"]},{"name":"Marlon","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":30,"marketValue":2.5,"titles":["Copa da Ucrânia 2025"],"position":"ZAG","positions":[[[["ZAG","LE"],"LE","ZAG"],"VOL","MEI"]],"eafc":72},{"name":"Marcao","club":"Sevilla FC","league":"La Liga","age":30,"games":20,"goals":0,"marketValue":2.5,"recent":false,"titles":[],"position":"ZAG","positions":["ZAG"],"eafc":75},{"name":"João Tornich","club":"LASK","league":"Outras ligas","age":23,"games":4,"goals":0,"marketValue":2.5,"recent":false,"position":"ZAG","positions":["ZAG"]},{"name":"Ignácio","club":"Fluminense","league":"Brasileirão Série A","age":29,"marketValue":2,"recent":false,"position":"ZAG","positions":[["ZAG"]]},{"name":"Luan","club":"Toluca","league":"Liga MX (México)","age":32,"marketValue":2,"titles":["Clausura MX 2025","Apertura MX 2025","Campeón de Campeones 2025"],"recent":false,"position":"ZAG","positions":["ZAG"],"eafc":76},{"name":"Andrei Girotto","club":"Al-Taawoun","league":"Saudi Pro League","age":34,"marketValue":2,"position":"ZAG","positions":["ZAG","VOL"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/RC_Lens_-_FC_Nantes_%2825-11-2020%29_14.jpg/330px-RC_Lens_-_FC_Nantes_%2825-11-2020%29_14.jpg"},{"name":"Willian Machado","club":"Mirassol","league":"Brasileirão Série A","age":29,"marketValue":2,"titles":[],"position":"ZAG","positions":[["ZAG"]]},{"name":"Eduardo Bauermann","club":"Pachuca","league":"Liga MX (México)","age":30,"goals":0,"assists":0,"marketValue":2,"recent":false,"position":"ZAG","positions":[["ZAG"]],"eafc":72},{"name":"Juan Jesus","club":"Napoli","league":"Serie A (Itália)","age":35,"games":24,"marketValue":2,"recent":false,"titles":["Serie A 2024-25","Supercopa da Itália 2025"],"position":"ZAG","positions":["ZAG","LE"],"eafc":75},{"name":"Kaio Fernando","club":"Botafogo","league":"Brasileirão Série A","age":30,"marketValue":1.8,"position":"ZAG","positions":["ZAG"],"eafc":75},{"name":"Riccieli","club":"Vitória","league":"Brasileirão Série A","age":27,"marketValue":1.8,"position":"ZAG","positions":[["ZAG"]],"eafc":72,"photo":"https://upload.wikimedia.org/wikipedia/commons/4/4b/Riccieli_2023.png"},{"name":"Cacá","club":"Vitória","league":"Brasileirão Série A","age":27,"marketValue":1.5,"position":"ZAG","positions":[["ZAG"]]},{"name":"Samir Caetano","club":"Al-Najma","league":"Saudi Pro League","age":31,"marketValue":1.5,"position":"ZAG","positions":["ZAG"],"eafc":72},{"name":"Mateus Lusuardi","club":"Reggiana","league":"Serie B (Itália)","age":24,"games":11,"goals":1,"marketValue":1.5,"recent":false,"titles":[],"position":"ZAG","positions":["ZAG"],"eafc":65},{"name":"Pedro Felipe","club":"Cremonese","league":"Serie A (Itália)","age":21,"games":3,"marketValue":1.5,"recent":false,"titles":[],"position":"ZAG","positions":["ZAG"],"eafc":69},{"name":"Jubal","club":"Krasnodar","league":"Liga Russa","age":32,"marketValue":1.5,"titles":["Campeonato Russo 2024-25"],"position":"ZAG","positions":["ZAG"],"eafc":75},{"name":"Rodrigo Guth","club":"Talleres","league":"Liga Argentina","age":25,"games":4,"goals":0,"assists":0,"prevGames":33,"prevGoals":3,"prevAssists":0,"marketValue":1.3,"position":"ZAG","positions":[["ZAG","VOL"]],"eafc":68},{"name":"Matias Antonini","club":"Catanzaro","league":"Serie B (Itália)","age":28,"games":36,"goals":3,"marketValue":1.2,"recent":false,"titles":[],"position":"ZAG","positions":["ZAG"],"eafc":65},{"name":"Doma","club":"Chapecoense","league":"Brasileirão Série A","age":27,"marketValue":1.2,"position":"ZAG","positions":["ZAG"],"eafc":72},{"name":"Lucas Gazal","club":"Fortaleza","league":"Brasileirão Série B","age":26,"marketValue":1.2,"titles":[],"position":"ZAG","positions":[["ZAG"]],"eafc":72},{"name":"Danilo Boza","club":"Urawa Red Diamonds","league":"J-League (Japão)","games":20,"goals":1,"marketValue":1,"position":"ZAG","positions":[["ZAG"]],"real":true},{"name":"Sabino","club":"São Paulo","league":"Brasileirão Série A","age":29,"marketValue":1,"recent":false,"position":"ZAG","positions":["ZAG"],"eafc":73},{"name":"Renan Santana","club":"FC Famalicão","league":"Primeira Liga (Portugal)","age":21,"marketValue":1,"titles":[],"recent":false,"position":"ZAG","positions":["ZAG"],"eafc":63},{"name":"Thiago Balieiro","club":"Vitória de Guimarães","league":"Primeira Liga (Portugal)","age":23,"marketValue":1,"titles":["Taça da Liga 2025-26"],"recent":false,"position":"ZAG","positions":["ZAG"],"eafc":60},{"name":"Henrique Trevisan","club":"FC Tokyo","league":"J-League (Japão)","marketValue":0.9,"position":"ZAG","positions":[["ZAG"]]},{"name":"Jean Pedroso","club":"Karpaty Lviv","league":"Liga Ucraniana","age":22,"marketValue":0.9,"position":"ZAG","positions":[["ZAG","LD"]]},{"name":"Douglas Mendes","club":"Red Bull Salzburg","league":"Outras ligas","age":22,"marketValue":0.8,"recent":false,"position":"ZAG","positions":["ZAG"]},{"name":"Laurent Lemoine","club":"Zulte Waregem","league":"Pro League (Bélgica)","age":28,"marketValue":0.8,"recent":false,"position":"ZAG","positions":["ZAG"],"eafc":65},{"name":"Marcelo Alves","club":"FC Sochi","league":"Liga Russa","age":28,"marketValue":0.8,"position":"ZAG","positions":["ZAG"]},{"name":"Gabriel Paulista","club":"Beşiktaş","league":"Süper Lig (Turquia)","age":35,"games":17,"goals":0,"marketValue":0.7,"titles":[],"position":"ZAG","positions":["ZAG"],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/9/95/Gabriel_Paulista_2026_%28cropped%29.jpg"},{"name":"João Paulo","club":"Chapecoense","league":"Brasileirão Série A","age":29,"marketValue":0.7,"position":"ZAG","positions":[[["CA","ZAG"],"CA"]]},{"name":"Filipe Bordon","club":"Südtirol","league":"Serie B (Itália)","age":25,"games":15,"marketValue":0.7,"recent":false,"titles":[],"position":"ZAG","positions":["ZAG"],"eafc":64},{"name":"Patrick William","club":"Kyoto Sanga","league":"J-League (Japão)","marketValue":0.6,"position":"ZAG","positions":["ZAG"]},{"name":"Lucão","club":"Fagiano Okayama","league":"J-League (Japão)","marketValue":0.6,"position":"ZAG","positions":["ZAG"]},{"name":"Jesiel","club":"Kawasaki Frontale","league":"J-League (Japão)","marketValue":0.6,"position":"ZAG","positions":[["ZAG"]]},{"name":"Paulo Vitor","club":"Vitória de Guimarães","league":"Primeira Liga (Portugal)","age":24,"marketValue":0.5,"titles":["Taça da Liga 2025-26"],"recent":false,"position":"ZAG","positions":[[["ZAG","PE","PD"],"MEI","VOL"]]},{"name":"Thiago Silva","club":"Fluminense","league":"Primeira Liga (Portugal)","age":41,"marketValue":0.5,"titles":["Primeira Liga 2025-26"],"recent":false,"position":"ZAG","positions":[["ZAG"]],"eafc":82,"photo":"https://upload.wikimedia.org/wikipedia/commons/c/c8/20180610_FIFA_Friendly_Match_Austria_vs._Brazil_Thiago_Silva_850_1582.jpg"},{"name":"Volnei Feltes","club":"Panserraikos","league":"Super League (Grécia)","age":26,"games":27,"goals":0,"assists":0,"rating":6.7,"marketValue":0.47,"recent":false,"position":"ZAG","positions":["ZAG"]},{"name":"Fabiano","club":"Aris","league":"Super League (Grécia)","age":34,"games":21,"goals":2,"assists":0,"rating":7.21,"marketValue":0.435,"recent":false,"position":"ZAG","positions":[["ZAG","PE"]]},{"name":"João Vialle","club":"Polissya Zhytomyr","league":"Liga Ucraniana","age":23,"marketValue":0.4,"position":"ZAG","positions":["ZAG"]},{"name":"Dante","club":"OGC Nice","league":"Ligue 1","age":42,"games":12,"goals":0,"assists":1,"marketValue":0.3,"position":"ZAG","positions":["ZAG"],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/b4/Dante_asse_ogcn_2425.png"},{"name":"Carbone","club":"FC Lugano","league":"Outras ligas","age":21,"marketValue":0.3,"recent":false,"position":"ZAG","positions":["ZAG"],"eafc":57},{"name":"Mansur","club":"Atromitos","league":"Super League (Grécia)","age":33,"games":29,"goals":3,"assists":1,"prevGames":26,"prevGoals":3,"prevAssists":0,"marketValue":0.3,"recent":false,"position":"ZAG","positions":["ZAG","LE"],"eafc":69},{"name":"Caetano","club":"Vissel Kobe","league":"J-League (Japão)","position":"ZAG","positions":["ZAG"]},{"name":"Filipe Alves","club":"UD Oliveirense","age":30,"league":"Liga 2 (Portugal)","position":"ZAG","positions":["ZAG"]},{"name":"Luan García","club":"Deportivo Toluca","league":"Liga MX (México)","age":33,"titles":["Campeón de Campeones (Liga MX) 2025"],"position":"ZAG","positions":["ZAG"]},{"name":"Rikelme","club":"Al Ahli (EAU)","league":"Outras ligas","age":22,"position":"ZAG","positions":["ZAG"],"eafc":68},{"name":"Aderllan Santos","club":"AVS Futebol SAD","age":37,"league":"Primeira Liga (Portugal)","position":"ZAG","positions":["ZAG"],"eafc":72},{"name":"Camutanga","club":"Vitória","league":"Brasileirão Série A","age":32,"position":"ZAG","positions":["ZAG"],"photo":"https://upload.wikimedia.org/wikipedia/commons/f/f6/Camutanga-pe.png"},{"name":"Léo Santos","club":"CD Nacional","age":27,"league":"Primeira Liga (Portugal)","position":"ZAG","positions":["ZAG"]},{"name":"Luan Patrick","club":"CF Estrela Amadora","age":24,"league":"Primeira Liga (Portugal)","position":"ZAG","positions":["ZAG"],"eafc":67},{"name":"Sidney Lima","club":"CD Santa Clara","age":29,"league":"Primeira Liga (Portugal)","position":"ZAG","positions":["ZAG"],"eafc":71},{"name":"Gustavo Mancha","club":"Rio Ave FC","age":21,"league":"Primeira Liga (Portugal)","position":"ZAG","positions":["ZAG"],"eafc":67},{"name":"Marcelo","club":"Moreirense FC","age":36,"league":"Primeira Liga (Portugal)","position":"ZAG","positions":["ZAG"]},{"name":"Léo","club":"Athletico-PR","league":"Brasileirão Série A","age":30,"position":"ZAG","positions":["ZAG"]},{"name":"Marlon Santos","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":30,"recent":false,"titles":["Campeonato Ucraniano 2025-26"],"position":"ZAG","positions":["ZAG","LE"],"eafc":72},{"name":"Kaique Rocha","club":"Casa Pia AC","age":25,"league":"Primeira Liga (Portugal)","position":"ZAG","positions":["ZAG"],"eafc":69},{"name":"Maracás","club":"Moreirense FC","age":32,"league":"Primeira Liga (Portugal)","position":"ZAG","positions":["ZAG"]},{"name":"David Sousa","club":"Casa Pia AC","age":24,"league":"Primeira Liga (Portugal)","position":"ZAG","positions":["ZAG"],"eafc":66},{"name":"Thalisson","club":"Gençlerbirliği","league":"Süper Lig (Turquia)","age":27,"games":29,"goals":2,"titles":[],"position":"ZAG","positions":["ZAG"],"eafc":66},{"name":"Luccas Claro","club":"Eyüpspor","league":"Süper Lig (Turquia)","age":34,"games":17,"goals":1,"titles":[],"position":"ZAG","positions":["ZAG"]},{"name":"Matheus Thuler","club":"Vissel Kobe","league":"J-League (Japão)","age":26,"games":41,"goals":2,"titles":["Campeão J1 League 2023","Campeão J1 League 2024","Copa do Imperador 2023","Melhor Zagueiro da J1 League 2024","Melhor Jogador do Vissel Kobe 2025"],"position":"ZAG","positions":[["ZAG"]]},{"name":"Bressan","club":"Chapecoense","league":"Brasileirão Série A","age":33,"position":"ZAG","positions":["ZAG"]},{"name":"Rodrigo Becão","club":"Kasımpaşa","league":"Süper Lig (Turquia)","age":30,"games":14,"goals":0,"titles":[],"position":"ZAG","positions":["ZAG"]},{"name":"Léo Duarte","club":"İstanbul Başakşehir","league":"Süper Lig (Turquia)","age":29,"games":26,"goals":0,"assists":1,"titles":[],"position":"ZAG","positions":["ZAG"]},{"name":"Bruno Viana","club":"Alanyaspor","league":"Süper Lig (Turquia)","age":31,"goals":0,"titles":[],"position":"ZAG","positions":["ZAG"],"eafc":71},{"name":"Iago Maidana","club":"Henan FC","league":"Outras ligas","age":30,"position":"ZAG","positions":[["ZAG"]],"eafc":70},{"name":"Allan Godói","club":"Göztepe","league":"Süper Lig (Turquia)","age":32,"games":27,"goals":0,"titles":[],"position":"ZAG","positions":["ZAG"]},{"name":"Felipe","club":"Chengdu Rongcheng","league":"Outras ligas","position":"ZAG","positions":["ZAG","VOL"],"eafc":73},{"name":"Héliton","club":"Göztepe","league":"Süper Lig (Turquia)","age":30,"games":32,"goals":0,"titles":[],"position":"ZAG","positions":["ZAG"]},{"name":"Reynaldo","club":"Remo","league":"Brasileirão Série A","age":29,"position":"ZAG","positions":["ZAG"]},{"name":"Oberdan","club":"Pohang Steelers","league":"Outras ligas","position":"ZAG","positions":["ZAG","VOL"],"eafc":75},{"name":"Bruno Guimarães","club":"Newcastle United","league":"Premier League","age":28,"games":29,"goals":9,"assists":5,"marketValue":60,"recent":true,"position":"VOL","positions":["VOL","MEI"],"real":true},{"name":"Andrey Santos","club":"Chelsea","league":"Premier League","age":21,"games":27,"goals":1,"assists":0,"marketValue":45,"titles":["Mundial de Clubes FIFA 2025"],"recent":true,"position":"VOL","positions":["VOL","MEI"],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/23/Santos_asse_rcsa_2425.jpg"},{"name":"Éderson","club":"Atalanta","league":"Serie A (Itália)","age":26,"games":30,"goals":2,"assists":1,"rating":7.14,"marketValue":45,"recent":false,"titles":[],"position":"VOL","positions":[["VOL","MEI","GOL"]],"real":true},{"name":"Joelinton","club":"Newcastle United","league":"Premier League","age":29,"games":27,"goals":2,"assists":1,"marketValue":40,"recent":true,"position":"VOL","positions":["VOL","MEI"],"eafc":82,"photo":"https://upload.wikimedia.org/wikipedia/commons/5/5f/Joelinton_%28cropped%29.jpg"},{"name":"João Gomes","club":"Wolverhampton Wanderers","league":"Premier League","age":24,"games":35,"goals":1,"assists":1,"marketValue":40,"recent":false,"position":"VOL","positions":["VOL"]},{"name":"Danilo","club":"Botafogo","league":"Brasileirão Série A","age":25,"marketValue":32,"games":12,"goals":7,"assists":2,"recent":false,"position":"VOL","positions":[[[[["CA"],"VOL","MEI"],"ZAG","LD"],"VOL","ZAG"]],"real":true,"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a3/Danilo_and_Bilal_El_Khannouss_at_2026_FIFA_World_Cup_by_YantsImages_%28cropped%29.jpg"},{"name":"André","club":"Wolverhampton Wanderers","league":"Premier League","age":24,"goals":0,"marketValue":25,"recent":false,"position":"VOL","positions":[[["VOL","MEI"],"MEI","VOL"]]},{"name":"Breno Bidon","club":"Corinthians","league":"Brasileirão Série A","age":21,"marketValue":22,"games":56,"goals":1,"assists":1,"recent":false,"titles":["Campeonato Paulista 2025","Copa do Brasil 2025"],"position":"VOL","positions":[["VOL","MEI"]],"eafc":67,"photo":"https://upload.wikimedia.org/wikipedia/commons/1/1d/Breno-de-souza-bidon-no-corinthians_y_corinthians_%28cropped%29.jpg"},{"name":"Douglas Luiz","club":"Aston Villa","league":"Premier League","age":28,"games":13,"goals":1,"assists":0,"marketValue":20,"recent":false,"position":"VOL","positions":["VOL","MEI"],"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/24/Douglas_Luiz_April_2026_%28cropped%29.jpg"},{"name":"Gerson","club":"Zenit","league":"Liga Russa","age":28,"games":15,"goals":2,"assists":8,"rating":6.87,"marketValue":18,"position":"VOL","positions":[[["VOL","MEI"],"VOL","MEI"]],"eafc":81,"photo":"https://upload.wikimedia.org/wikipedia/commons/3/3c/1354783_sPICT_%28cropped%29.jpg"},{"name":"Martinelli","club":"Fluminense","league":"Brasileirão Série A","age":24,"marketValue":16,"recent":false,"position":"VOL","positions":[["VOL","MEI"]],"eafc":76},{"name":"Vini Souza","club":"VfL Wolfsburg","league":"Bundesliga","age":26,"games":24,"goals":0,"assists":0,"marketValue":15,"recent":false,"titles":[],"position":"VOL","positions":["VOL","ZAG"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/8a/BHA_5_v_Espanyol_1_pre_season_30_07_2022_31_%28cropped%29.jpg"},{"name":"Wendel","club":"Zenit","league":"Liga Russa","age":28,"marketValue":15,"titles":["Campeonato Russo 2024-25"],"position":"VOL","positions":[["VOL","MEI","CA"]],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/03/Wendel_Zenit.jpg"},{"name":"Hércules","club":"Fluminense","league":"Brasileirão Série A","age":25,"prevGoals":3,"marketValue":15,"recent":false,"position":"VOL","positions":[["VOL","MEI"]]},{"name":"Jean Lucas","club":"Bahia","league":"Brasileirão Série A","age":28,"marketValue":13,"titles":["Copa do Nordeste 2025","Campeonato Baiano 2025"],"position":"VOL","positions":[["MEI","VOL"]],"eafc":75,"photo":"https://upload.wikimedia.org/wikipedia/commons/f/fd/Jean_Lucas_comemora_gol_marcado_pelo_Bahia.jpg"},{"name":"Fabinho","club":"Al-Ittihad","league":"Saudi Pro League","age":32,"goals":3,"assists":4,"marketValue":12,"position":"VOL","positions":[[["VOL","ZAG"],"VOL"]],"real":true,"eafc":82,"photo":"https://upload.wikimedia.org/wikipedia/commons/d/d0/Fabinho_Brazil_V_Morocco_13_June_2026-70.jpg"},{"name":"Marcos Antônio","club":"São Paulo","league":"Brasileirão Série A","age":26,"prevGames":43,"prevAssists":6,"marketValue":12,"recent":false,"position":"VOL","positions":[["MEI","VOL"]]},{"name":"Marlon Gomes","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":22,"games":23,"goals":2,"assists":3,"rating":7.03,"marketValue":12,"titles":["Copa da Ucrânia 2024","Copa da Ucrânia 2025"],"position":"VOL","positions":[["VOL","MEI"]],"eafc":70},{"name":"Evertton Araújo","club":"Flamengo","league":"Brasileirão Série A","age":23,"marketValue":10,"games":13,"goals":0,"assists":1,"recent":false,"position":"VOL","positions":[["VOL"]]},{"name":"Casemiro","club":"Manchester United","league":"Premier League","age":34,"games":34,"goals":9,"assists":2,"marketValue":8,"recent":false,"position":"VOL","positions":["VOL"],"real":true,"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/2f/Casemiro_Brazil_V_Morocco_13_June_2026-76_%28cropped%29.jpg"},{"name":"Amorim","club":"Genoa","league":"Serie A (Itália)","age":22,"games":11,"marketValue":8,"recent":false,"titles":[],"position":"VOL","positions":["VOL","MEI"],"eafc":67},{"name":"Metinho","club":"FC Basel","league":"Outras ligas","age":23,"games":29,"goals":4,"assists":0,"marketValue":8,"recent":false,"position":"VOL","positions":["VOL","MEI"],"eafc":69},{"name":"Gabriel Menino","club":"Santos","league":"Brasileirão Série A","age":25,"marketValue":7,"recent":false,"position":"VOL","positions":["VOL","MEI","LD"],"eafc":73,"photo":"https://upload.wikimedia.org/wikipedia/commons/6/62/Gabriel-Menino-Palmeiras-Athletico-jul-2022.jpg"},{"name":"Caio Alexandre","club":"Bahia","league":"Brasileirão Série A","age":27,"marketValue":7,"titles":["Copa do Nordeste 2025","Campeonato Baiano 2025"],"position":"VOL","positions":[["VOL","MEI"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/83/Sulamericana_CUP_2023_Semifinal_-_Corinthians_x_Fortaleza-CE_%2853554974219%29_%28cropped%29.jpg"},{"name":"Douglas Augusto","club":"Krasnodar","league":"Liga Russa","age":29,"marketValue":7,"titles":["Campeonato Russo 2024-25"],"position":"VOL","positions":["VOL","MEI"],"eafc":75},{"name":"Gabriel Moscardo","club":"Paris Saint-Germain","league":"Primeira Liga (Portugal)","age":20,"games":10,"goals":0,"assists":0,"marketValue":7,"titles":[],"recent":false,"position":"VOL","positions":["VOL","ZAG"],"eafc":72},{"name":"Fred","club":"Fenerbahçe","league":"Süper Lig (Turquia)","age":33,"games":30,"goals":3,"assists":4,"marketValue":7,"titles":[],"position":"VOL","positions":["VOL","MEI"],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/8d/Fred_Brazil_%28cropped%29.jpg"},{"name":"Marlon Freitas","club":"Palmeiras","league":"Brasileirão Série A","age":31,"marketValue":6,"games":17,"goals":2,"assists":1,"recent":false,"position":"VOL","positions":[[["VOL"],"VOL"]],"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/29/Marlon-Freitas-Palmeiras-Jacuipence-abr26.jpg"},{"name":"Alexsander","club":"Atlético-MG","league":"Brasileirão Série A","age":22,"marketValue":5.5,"recent":false,"position":"VOL","positions":[["VOL","MEI"]]},{"name":"Cauan Barros","club":"Vasco da Gama","league":"Brasileirão Série A","age":22,"marketValue":5,"titles":[],"position":"VOL","positions":[["VOL","MEI"]],"eafc":74},{"name":"Pablo Maia","club":"São Paulo","league":"Brasileirão Série A","age":24,"marketValue":5,"recent":false,"position":"VOL","positions":[["VOL"]],"eafc":76},{"name":"Matheus Henrique","club":"Cruzeiro","league":"Brasileirão Série A","age":28,"marketValue":4.5,"games":17,"goals":0,"assists":0,"recent":false,"position":"VOL","positions":["VOL","MEI"],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/3/3c/Matheus_Henrique_Match_Football_Spezia_Calcio_x_US_Sassuolo_Calcio_Stade_Alberto_Picco_-_La_Spezia_%28IT42%29_-_2022-08-27_-_2_%28cropped%29.jpg"},{"name":"Lucas Evangelista","club":"Palmeiras","league":"Brasileirão Série A","age":31,"marketValue":4,"games":16,"goals":0,"assists":1,"recent":false,"position":"VOL","positions":["VOL","MEI"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/8b/Lucas-evangelista-palmeiras-sport-ago-25-2.jpg"},{"name":"Raniele","club":"Corinthians","league":"Brasileirão Série A","age":29,"marketValue":4,"recent":false,"titles":["Copa do Brasil 2025","Campeonato Paulista 2025"],"position":"VOL","positions":[["VOL"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/f/f4/Raniele_2026.jpg"},{"name":"Vitor Carvalho","club":"SC Braga","league":"Primeira Liga (Portugal)","age":29,"games":15,"marketValue":3.9,"titles":[],"recent":false,"position":"VOL","positions":["VOL","ZAG"],"eafc":75},{"name":"Newton","club":"Botafogo","league":"Brasileirão Série A","age":26,"marketValue":3,"games":7,"goals":0,"assists":0,"recent":false,"position":"VOL","positions":[["VOL","MEI"]],"eafc":72},{"name":"Ryan","club":"Fortaleza","league":"Brasileirão Série B","age":22,"marketValue":3,"titles":[],"position":"VOL","positions":[[["VOL"],"VOL","MEI"]]},{"name":"Leonel Picco","club":"Remo","league":"Brasileirão Série A","age":27,"marketValue":3,"position":"VOL","positions":["VOL"],"eafc":73},{"name":"Patrick de Paula","club":"Botafogo","league":"Brasileirão Série A","age":26,"marketValue":2.5,"recent":false,"position":"VOL","positions":[[["VOL","MEI"],"VOL","MEI"]],"eafc":71,"photo":"https://upload.wikimedia.org/wikipedia/commons/c/c7/Patrick-de-Paula-Palmeiras-2021.jpg"},{"name":"Walace","club":"Vitória","league":"Brasileirão Série A","age":31,"marketValue":2.5,"position":"VOL","positions":["VOL"],"photo":"https://upload.wikimedia.org/wikipedia/commons/3/3e/Walace_Souza_Silva.jpg"},{"name":"Rodrigo Dourado","club":"Club América","league":"Liga MX (México)","age":31,"games":13,"goals":0,"assists":1,"marketValue":2.5,"position":"VOL","positions":[["VOL","MEI"]],"eafc":72},{"name":"Carvalheira","club":"Chapecoense","league":"Brasileirão Série A","age":27,"marketValue":2.5,"position":"VOL","positions":["VOL"]},{"name":"Baralhas","club":"Vitória","league":"Brasileirão Série A","age":27,"marketValue":2.5,"position":"VOL","positions":["VOL","MEI"],"photo":"https://upload.wikimedia.org/wikipedia/commons/3/3f/Botafogo-SP_x_Atl%C3%A9tico-GO_-_2023_-_Gabriel_Baralhas.jpg"},{"name":"Thiago Maia","club":"Internacional","league":"Brasileirão Série A","age":29,"marketValue":2.5,"recent":false,"position":"VOL","positions":[["VOL","ZAG"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/9/96/Brasil_estreia_contra_a_%C3%81frica_do_Sul_no_Man%C3%A9_Garrincha_%E2%80%94_%D0%BA%D0%BE%D0%BF%D0%B8%D1%8F_%283%29.jpg"},{"name":"Zanocelo","club":"Ceará","league":"Brasileirão Série B","age":25,"marketValue":2,"position":"VOL","positions":["VOL"],"eafc":73},{"name":"João Cruz","club":"Athletico-PR","league":"Brasileirão Série A","age":20,"marketValue":2,"position":"VOL","positions":["VOL","MEI"]},{"name":"Nonato","club":"Fluminense","league":"Brasileirão Série A","age":28,"marketValue":2,"games":28,"recent":false,"position":"VOL","positions":[["VOL","MEI"]],"eafc":73,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/84/Inter_X_Fluminense_-_2025-07-30_2_%28Nonato%29.png"},{"name":"Camilo","club":"Chapecoense","league":"Brasileirão Série A","age":27,"marketValue":2,"position":"VOL","positions":["VOL","MEI"],"eafc":72,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a7/Fernando_Camilo_Farias.jpg"},{"name":"Baltazar","club":"FC Sion","league":"Outras ligas","age":26,"games":35,"goals":2,"assists":4,"marketValue":2,"recent":false,"position":"VOL","positions":[["VOL","MEI"]],"eafc":69},{"name":"Flávio","club":"Al-Taawoun","league":"Saudi Pro League","age":30,"marketValue":2,"position":"VOL","positions":["VOL","MEI"]},{"name":"Neto Moura","club":"Mirassol","league":"Brasileirão Série A","age":29,"marketValue":2,"titles":[],"position":"VOL","positions":[["VOL","MEI"]],"eafc":72},{"name":"Charlys","club":"Reggiana","league":"Serie B (Itália)","age":24,"games":32,"goals":1,"marketValue":1.5,"recent":false,"titles":[],"position":"VOL","positions":["VOL","MEI"],"eafc":63},{"name":"Du Queiroz","club":"FK Orenburg","league":"Liga Russa","age":26,"marketValue":1.5,"position":"VOL","positions":["VOL","MEI"]},{"name":"Zé Rafael","club":"Santos","league":"Brasileirão Série A","age":33,"marketValue":1.5,"recent":false,"position":"VOL","positions":[["VOL","MEI"]]},{"name":"Hernani","club":"Monza","league":"Serie B (Itália)","age":32,"games":18,"goals":5,"assists":1,"rating":7.12,"marketValue":1.2,"recent":false,"titles":[],"position":"VOL","positions":["VOL","MEI"],"eafc":74},{"name":"Hugo Moura","club":"Vasco da Gama","league":"Brasileirão Série A","age":28,"marketValue":1,"titles":[],"position":"VOL","positions":[["VOL"]],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/4/43/Hugo_Moura_-_S%C3%89RIE_A_-_PALMEIRAS_0_X_2_ATHLETICO_PARANAENSE_-_52193228890_%28cropped%29.jpg"},{"name":"Pierre","club":"Fortaleza","league":"Brasileirão Série B","age":24,"marketValue":1,"recent":false,"position":"VOL","positions":["VOL"],"eafc":71},{"name":"Zé Welison","club":"Remo","league":"Brasileirão Série A","age":31,"marketValue":1,"position":"VOL","positions":["VOL"]},{"name":"Wallisson","club":"Coritiba","league":"Brasileirão Série A","age":28,"marketValue":0.9,"position":"VOL","positions":["VOL"]},{"name":"Willian Arão","club":"Santos","league":"Brasileirão Série A","age":34,"marketValue":0.8,"games":15,"recent":false,"position":"VOL","positions":["VOL","ZAG"]},{"name":"Erick Nunes","club":"Cercle Brugge","league":"Pro League (Bélgica)","age":21,"marketValue":0.6,"recent":false,"position":"VOL","positions":["VOL","MEI"],"eafc":61},{"name":"Edson Fernando","club":"Rukh Lviv","league":"Liga Ucraniana","age":28,"marketValue":0.5,"position":"VOL","positions":[["VOL","MEI"]]},{"name":"Eriki","club":"Karpaty Lviv","league":"Liga Ucraniana","age":20,"marketValue":0.3,"position":"VOL","positions":["VOL"]},{"name":"Victor Hugo","club":"Al-Taawoun","league":"Saudi Pro League","age":22,"marketValue":0.225,"position":"VOL","positions":[[["VOL","MEI"],"MEI","VOL"]],"eafc":58},{"name":"Petros","club":"Al-Okhdood","league":"Saudi Pro League","age":37,"marketValue":0.2,"position":"VOL","positions":["VOL","ZAG"],"eafc":72},{"name":"Iago Santos","club":"Dibba Al-Fujairah","league":"Outras ligas","position":"VOL","positions":["VOL","ZAG"]},{"name":"Dawhan","club":"Beijing Guoan","league":"Outras ligas","position":"VOL","positions":["VOL"],"eafc":69},{"name":"Filipe Augusto","club":"Khorfakkan","league":"Outras ligas","age":32,"position":"VOL","positions":[["VOL","MEI"]],"eafc":69},{"name":"Jobson","club":"Al Dhafra","league":"Outras ligas","position":"VOL","positions":["VOL"]},{"name":"Matheus Jussa","club":"Shanghai Port","league":"Outras ligas","titles":["Chinese Super League 2025 (Shanghai Port)"],"position":"VOL","positions":["VOL"],"eafc":71},{"name":"Matheus Dias","club":"CD Nacional","age":24,"league":"Primeira Liga (Portugal)","position":"VOL","positions":["VOL"],"eafc":68},{"name":"Gabriel Baralhas","club":"Vitória","league":"Brasileirão Série A","age":27,"position":"VOL","positions":["VOL","MEI"],"photo":"https://upload.wikimedia.org/wikipedia/commons/3/3f/Botafogo-SP_x_Atl%C3%A9tico-GO_-_2023_-_Gabriel_Baralhas.jpg"},{"name":"Sebastián Gómez","club":"Coritiba","league":"Brasileirão Série A","age":30,"position":"VOL","positions":["VOL","MEI"]},{"name":"Roni","club":"AVS Futebol SAD","age":27,"league":"Primeira Liga (Portugal)","position":"VOL","positions":["VOL"],"eafc":66},{"name":"Pedro Castro","club":"Remo","league":"Brasileirão Série A","age":33,"position":"VOL","positions":["VOL","MEI"]},{"name":"Ryan Guilherme","club":"Rio Ave FC","age":23,"league":"Primeira Liga (Portugal)","position":"VOL","positions":["VOL","MEI"],"eafc":63},{"name":"Maycon","club":"Atlético Mineiro","league":"Brasileirão Série A","age":28,"recent":false,"position":"VOL","positions":["VOL","MEI"],"photo":"https://upload.wikimedia.org/wikipedia/commons/8/85/Maycon-Corinthians-Sao-Paulo-jul-2022.jpg"},{"name":"Rómulo Zwarg","club":"Tigres UANL","league":"Liga MX (México)","age":26,"position":"VOL","positions":["VOL","LD","ZAG"]},{"name":"Rhaldney","club":"Göztepe","league":"Süper Lig (Turquia)","age":27,"games":18,"goals":1,"titles":[],"position":"VOL","positions":[["VOL","MEI"]],"eafc":68},{"name":"Yuri Lara","club":"Yokohama FC","league":"J-League (Japão)","position":"VOL","positions":["VOL"]},{"name":"Ismael Silva","club":"Akhmat Grozny","league":"Liga Russa","age":31,"position":"VOL","positions":["VOL","MEI"]},{"name":"Gregore","club":"Al-Rayyan","league":"Outras ligas","age":31,"position":"VOL","positions":["VOL","ZAG"],"eafc":73},{"name":"Gustavo Assunção","club":"AVS Futebol SAD","age":26,"league":"Primeira Liga (Portugal)","position":"VOL","positions":["VOL","MEI"]},{"name":"Victor Bobsin","club":"Daejeon Hana Citizen","league":"Outras ligas","age":26,"position":"VOL","positions":["VOL","MEI"],"eafc":68},{"name":"Mateus Henrique","club":"Al Ahli (EAU)","league":"Outras ligas","age":23,"position":"VOL","positions":["VOL","ZAG"]},{"name":"Cícero","club":"CD Tondela","age":29,"league":"Primeira Liga (Portugal)","position":"VOL","positions":["VOL"]},{"name":"Lucas Paquetá","club":"Flamengo","league":"Brasileirão Série A","age":28,"marketValue":32,"games":12,"goals":3,"assists":0,"recent":true,"position":"MEI","positions":[[["MEI","VOL"],"MEI","VOL"]],"real":true,"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/0c/Lucas_Paqueta_Brazil_V_Morocco_13_June_2026-134_%28cropped%29.jpg"},{"name":"Gabriel Sara","club":"Galatasaray","league":"Süper Lig (Turquia)","age":26,"games":42,"goals":6,"assists":5,"marketValue":27,"titles":["Süper Lig 2025-26","Copa da Turquia 2024-25"],"position":"MEI","positions":["MEI","VOL"],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/1/19/Gabriel_Sara_with_a_fan_%28cropped_2%29.jpg"},{"name":"Talisca","club":"Fenerbahçe","league":"Süper Lig (Turquia)","age":32,"games":30,"goals":19,"assists":4,"rating":7.03,"marketValue":15,"titles":[],"position":"MEI","positions":[["ZAG","MEI","CA"]],"eafc":81,"photo":"https://upload.wikimedia.org/wikipedia/commons/c/c3/Anderson_talisca-1527276212_%28cropped%29.jpg"},{"name":"Bitello","club":"Dinamo Moscou","league":"Liga Russa","age":26,"games":19,"goals":5,"assists":3,"marketValue":15,"position":"MEI","positions":["MEI","PE"],"eafc":75},{"name":"Jhon Jhon","club":"Zenit","league":"Liga Russa","age":23,"games":11,"goals":2,"marketValue":15,"position":"MEI","positions":["MEI"],"eafc":75},{"name":"Matheus Pereira","club":"Cruzeiro","league":"Brasileirão Série A","age":30,"marketValue":14,"goals":7,"assists":9,"games":51,"titles":["Seleção do Brasileirão 2025"],"position":"MEI","positions":[["MEI","PD"]],"eafc":72,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/bb/20190428_DFL_1._Bundesliga_FCN_-_FCB_DSC_7579.jpg"},{"name":"Andreas Pereira","club":"Palmeiras","league":"Brasileirão Série A","age":30,"marketValue":14,"goals":2,"assists":1,"games":20,"titles":["Campeonato Paulista 2026"],"position":"MEI","positions":[["MEI","VOL"]],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/b4/Andreas-Pereira-Palmeiras-Internacional-sep2025_%28cropped%29.jpg"},{"name":"Claudinho","club":"Al-Sadd","league":"Outras ligas","age":28,"marketValue":12,"position":"MEI","positions":["MEI","PE"],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/4/45/Claudinho_in_Zenit_2023.jpg"},{"name":"Christian","club":"Cruzeiro","league":"Brasileirão Série A","age":25,"marketValue":12,"games":17,"goals":5,"assists":3,"recent":false,"position":"MEI","positions":[["MEI","VOL"]],"eafc":76},{"name":"Gabriel Carvalho","club":"Al-Qadsiah","league":"Saudi Pro League","age":18,"games":12,"goals":1,"assists":2,"marketValue":12,"position":"MEI","positions":["MEI","PD"],"eafc":54},{"name":"Isaque","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":19,"marketValue":11,"position":"MEI","positions":[["MEI","VOL"]],"eafc":66},{"name":"Raphael Veiga","club":"Club América","league":"Liga MX (México)","age":31,"games":13,"goals":2,"assists":2,"prevGames":53,"prevGoals":7,"prevAssists":12,"marketValue":10,"position":"MEI","positions":[["MEI"]],"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/d/d1/Raphael-Veiga-Palmeiras-Criciuma-sep24_%28cropped%29-2.jpg"},{"name":"Gabriel Bontempo","club":"Santos","league":"Brasileirão Série A","age":21,"marketValue":9,"recent":false,"position":"MEI","positions":["MEI","VOL"],"eafc":69,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/28/Gabriel_Bontempo_28-12-2024.png"},{"name":"Neymar","club":"Santos","league":"Brasileirão Série A","age":34,"prevGames":28,"prevGoals":11,"prevAssists":4,"prevRating":7.47,"marketValue":8,"recent":false,"position":"MEI","positions":[["MEI","PE","CA"]],"real":true,"eafc":83,"photo":"https://upload.wikimedia.org/wikipedia/commons/c/c0/Neymar_Junior_Brazil_V_Morocco_13_June_2026-40.jpg"},{"name":"Rodrigo Nestor","club":"Bahia","league":"Brasileirão Série A","age":25,"marketValue":7,"recent":false,"position":"MEI","positions":[["MEI","VOL"]],"eafc":71,"photo":"https://upload.wikimedia.org/wikipedia/commons/d/d3/Rodrigo_Nestor_-_S%C3%A9rie_A_-_S%C3%83O_PAULO_0_X_0_JUVENTUDE_%28cropped%29.jpg"},{"name":"Matheus Alves","club":"CSKA Moscou","league":"Liga Russa","age":21,"marketValue":6,"position":"MEI","positions":["MEI"],"eafc":73},{"name":"Rodriguinho","club":"RB Bragantino","league":"Brasileirão Série A","age":22,"marketValue":6,"titles":[],"position":"MEI","positions":[["MEI"]],"eafc":71},{"name":"Gustavo Scarpa","club":"Atlético-MG","league":"Brasileirão Série A","age":32,"marketValue":4.5,"titles":["Vice-campeão Copa Sul-Americana 2025"],"position":"MEI","positions":[["MEI","PE","VOL"]],"eafc":75,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/b6/2022-Gustavo-Scarpa-2022.png"},{"name":"Lorran","club":"Pisa","league":"Serie A (Itália)","age":19,"games":9,"goals":1,"marketValue":4,"recent":false,"titles":[],"position":"MEI","positions":["MEI","PE"],"eafc":65},{"name":"Gustavo Neves","club":"RB Bragantino","league":"Brasileirão Série A","age":22,"marketValue":3.5,"recent":false,"position":"MEI","positions":["MEI","VOL"],"eafc":70},{"name":"Eric Ramires","club":"RB Bragantino","league":"Brasileirão Série A","age":25,"marketValue":3.5,"titles":[],"position":"MEI","positions":[["MEI","VOL"]],"eafc":75},{"name":"Mateus Vital","club":"Shanghai Port","league":"Outras ligas","age":28,"games":30,"goals":5,"prevGames":30,"marketValue":3,"titles":["Chinese Super League 2025 (Shanghai Port)"],"position":"MEI","positions":[["MEI","CA"]],"eafc":71},{"name":"Igor Coronado","club":"Sharjah","league":"Outras ligas","age":32,"games":7,"goals":2,"prevGames":22,"prevGoals":3,"marketValue":3,"titles":["UAE Super Cup 2025","Qatar-UAE Super Cup 2026","Campeonato Paulista 2025 (Corinthians)","Copa do Brasil 2025 (Corinthians)"],"position":"MEI","positions":[["MEI","PE"]],"eafc":74},{"name":"Calebe","club":"Deportivo Alaves","league":"La Liga","age":26,"games":20,"goals":0,"assists":0,"marketValue":3,"recent":false,"titles":[],"position":"MEI","positions":[[["MEI","VOL"],"MEI"]],"eafc":69},{"name":"Igor Gomes","club":"Atlético-MG","league":"Brasileirão Série A","age":27,"marketValue":2.5,"titles":["Vice-campeão Copa Sul-Americana 2025"],"position":"MEI","positions":["MEI","VOL"],"eafc":75,"photo":"https://upload.wikimedia.org/wikipedia/commons/5/57/S%C3%A9rie_A_-_S%C3%83O_PAULO_0_X_0_JUVENTUDE_-_Igor_Gomes_em_2022.jpg"},{"name":"Lucas Fernandes","club":"Cerezo Osaka","league":"J-League (Japão)","games":32,"goals":7,"assists":15,"rating":7.69,"marketValue":2.5,"position":"MEI","positions":[["MEI","PD"]],"eafc":68},{"name":"Alan Patrick","club":"Internacional","league":"Brasileirão Série A","age":35,"marketValue":2,"goals":9,"assists":4,"games":15,"rating":7.75,"position":"MEI","positions":[["MEI"]],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/af/Alan_Patrick_at_Internacional_in_2023.png"},{"name":"Danielzinho","club":"Mirassol","league":"Brasileirão Série A","age":25,"marketValue":2,"titles":[],"position":"MEI","positions":["MEI"],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/0a/07-05-24_-_Botafogo_x_Mirassol_-_S%C3%A9rie_B_02_-_Danielzinho.jpg"},{"name":"Vinícius Lima","club":"Club América","league":"Liga MX (México)","age":30,"games":12,"goals":1,"assists":1,"marketValue":2,"recent":false,"position":"MEI","positions":[["MEI","LE"]],"real":true},{"name":"Reinier","club":"Atlético-MG","league":"Brasileirão Série A","age":24,"marketValue":2,"recent":false,"position":"MEI","positions":[["MEI","CA"]],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/86/Reinier_2020.png"},{"name":"Riquelme","club":"Grêmio","league":"Brasileirão Série A","age":19,"marketValue":2,"recent":false,"position":"MEI","positions":[["MEI","PD"]],"eafc":69},{"name":"Denilson","club":"Mirassol","league":"Brasileirão Série A","age":25,"marketValue":2,"recent":false,"position":"MEI","positions":["MEI","VOL"]},{"name":"Guilherme Castilho","club":"FC Juárez","league":"Liga MX (México)","age":26,"goals":3,"marketValue":1.5,"recent":false,"position":"MEI","positions":[["MEI","VOL"]]},{"name":"José Aldo","club":"Mirassol","league":"Brasileirão Série A","age":27,"marketValue":1.5,"recent":false,"position":"MEI","positions":["MEI","VOL"]},{"name":"Eduardo Ageu","club":"Heart of Midlothian","league":"Outras ligas","age":24,"marketValue":1.3,"recent":false,"position":"MEI","positions":["MEI","VOL"],"eafc":69},{"name":"Matheus Sávio","club":"Urawa Red Diamonds","league":"J-League (Japão)","games":21,"goals":2,"assists":4,"marketValue":1.3,"position":"MEI","positions":[["MEI","PE","PD"]]},{"name":"Shaylon","club":"Mirassol","league":"Brasileirão Série A","age":29,"marketValue":1,"titles":[],"position":"MEI","positions":["MEI","PD"],"eafc":72,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/8d/Shaylon_atuando_pelo_S%C3%A3o_Paulo_em_2017_%2835660138772%29_%28cropped%29.jpg"},{"name":"Vitor Bueno","club":"Remo","league":"Brasileirão Série A","age":31,"marketValue":1,"position":"MEI","positions":[["MEI"]],"eafc":72,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/8f/Vitor-Bueno-Athletico-Palmeiras-jul-2022.jpg"},{"name":"Cauan Baptistella","club":"Metalist 1925 Kharkiv","league":"Liga Ucraniana","age":18,"marketValue":1,"position":"MEI","positions":["MEI"]},{"name":"Everton Ribeiro","club":"Bahia","league":"Brasileirão Série A","age":37,"marketValue":1,"titles":["Copa do Nordeste 2025","Campeonato Baiano 2025"],"position":"MEI","positions":[["MEI","PD"]],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/7/7d/Everton_Ribeiro_em_entrevista.jpg"},{"name":"João Vitor","club":"Chapecoense","league":"Brasileirão Série A","age":28,"marketValue":0.9,"position":"MEI","positions":["MEI","VOL"]},{"name":"Talles Costa","club":"Polissya Zhytomyr","league":"Liga Ucraniana","age":23,"goals":0,"assists":1,"marketValue":0.9,"prevGames":11,"prevGoals":1,"prevAssists":2,"position":"MEI","positions":[["MEI","CA","PD"]]},{"name":"Jonathan Silva","club":"Padova","league":"Serie B (Itália)","age":26,"games":17,"marketValue":0.8,"recent":false,"titles":[],"position":"MEI","positions":["MEI","VOL"]},{"name":"Marcos Júnior","club":"Sanfrecce Hiroshima","league":"J-League (Japão)","games":4,"marketValue":0.8,"position":"MEI","positions":["MEI","CA"]},{"name":"Bruninho","club":"Maccabi Haifa","league":"Outras ligas","age":26,"games":26,"goals":8,"assists":3,"marketValue":0.7,"prevGames":25,"prevGoals":8,"recent":false,"titles":["Jogador do Mês do Campeonato Ucraniano set/2025"],"position":"MEI","positions":[["MEI","CA","PD"]],"eafc":68},{"name":"Lucas Crispim","club":"Fortaleza","league":"Brasileirão Série B","age":32,"marketValue":0.7,"titles":[],"position":"MEI","positions":["MEI","PD"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/22/Santos_elimina_Galvez_da_Copa_do_Brasil_na_Arena_da_Floresta_%2827123372342%29_-_Lucas_Crispim.jpg"},{"name":"Diego","club":"Kashiwa Reysol","league":"J-League (Japão)","marketValue":0.7,"position":"MEI","positions":["MEI"]},{"name":"Max","club":"Chapecoense","league":"Brasileirão Série A","age":25,"marketValue":0.6,"position":"MEI","positions":["MEI"]},{"name":"Talles Brener","club":"Rukh Lviv","league":"Liga Ucraniana","age":28,"marketValue":0.5,"position":"MEI","positions":["MEI"]},{"name":"Taison","club":"PAOK","league":"Super League (Grécia)","age":38,"games":11,"goals":3,"assists":3,"rating":7.25,"marketValue":0.4,"recent":false,"position":"MEI","positions":["MEI","PE","PD"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/3/3e/PAOK_Saloniki_-taison_2023.jpg"},{"name":"Fabrício Yan","club":"NK Veres Rivne","league":"Liga Ucraniana","age":22,"marketValue":0.3,"position":"MEI","positions":["MEI"]},{"name":"Paulo Henrique Ganso","club":"Fluminense","league":"Brasileirão Série A","age":36,"marketValue":0.3,"recent":false,"position":"MEI","positions":["MEI"],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/f/fd/Ganso_%28cropped%29.jpg"},{"name":"Ganso","club":"Fluminense","league":"Brasileirão Série A","age":36,"marketValue":0.3,"recent":false,"position":"MEI","positions":["MEI"],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/f/fd/Ganso_%28cropped%29.jpg"},{"name":"Alex Teixeira","club":"Panserraikos","league":"Super League (Grécia)","age":36,"games":14,"goals":3,"assists":2,"rating":6.79,"marketValue":0.17,"recent":false,"position":"MEI","positions":["MEI","CA","PE"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/9/90/Alex_Teixeira_2015.jpg"},{"name":"Leandrinho","club":"Emirates Club","league":"Outras ligas","age":32,"position":"MEI","positions":["MEI","PE"],"eafc":68},{"name":"Giuliano","club":"Athletico-PR","league":"Brasileirão Série A","age":36,"position":"MEI","positions":["MEI","VOL"],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/4/4e/Giuliano-Corinthians-Juventude-jul-2022.jpg"},{"name":"Vina","club":"Ceará","league":"Brasileirão Série B","age":33,"position":"MEI","positions":["MEI","PD"],"eafc":72},{"name":"Patrick","club":"Athletico-PR","league":"Brasileirão Série A","age":33,"position":"MEI","positions":["MEI"],"eafc":71,"photo":"https://upload.wikimedia.org/wikipedia/commons/6/6a/Patrick_Santos_24-04-2024.png"},{"name":"Luquinhas","club":"CD Santa Clara","age":29,"league":"Primeira Liga (Portugal)","position":"MEI","positions":["MEI","PE"],"eafc":70},{"name":"Josué","club":"Coritiba","league":"Brasileirão Série A","age":29,"prevGoals":7,"prevAssists":7,"position":"MEI","positions":["MEI","VOL"]},{"name":"Alan","club":"Moreirense FC","age":26,"league":"Primeira Liga (Portugal)","position":"MEI","positions":["MEI"],"eafc":74},{"name":"Giovanni Augusto","club":"Chapecoense","league":"Brasileirão Série A","age":36,"position":"MEI","positions":["MEI"],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/e/e8/Giovanni_Augusto_2019.png"},{"name":"Lucas Lima","club":"Goiás","league":"Brasileirão Série B","age":35,"position":"MEI","positions":["MEI","VOL"],"eafc":70},{"name":"Jaderson","club":"Remo","league":"Brasileirão Série A","age":25,"position":"MEI","positions":["MEI","VOL"]},{"name":"Robinho","club":"CF Estrela Amadora","age":23,"league":"Primeira Liga (Portugal)","position":"MEI","positions":["MEI","VOL"],"eafc":66},{"name":"Patrick Verhon","club":"Kawasaki Frontale","league":"J-League (Japão)","position":"MEI","positions":["MEI"]},{"name":"Rodrigo Tabata","club":"Al-Markhiya","league":"Outras ligas","age":45,"position":"MEI","positions":["MEI"]},{"name":"Juan Alano","club":"Gamba Osaka","league":"J-League (Japão)","age":30,"assists":7,"position":"MEI","positions":["MEI","PD"]},{"name":"Andrigo","club":"Dibba Al-Fujairah","league":"Outras ligas","position":"MEI","positions":["MEI","PD"],"eafc":66},{"name":"Daniel Bessa","club":"Al Bataeh","league":"Outras ligas","position":"MEI","positions":["MEI","VOL"]},{"name":"Guilherme Madruga","club":"Shandong Taishan","league":"Outras ligas","age":25,"position":"MEI","positions":[["CA","PD","MEI"]],"eafc":69},{"name":"Yan Phillipe","club":"Atlético San Luis","league":"Liga MX (México)","age":21,"recent":false,"position":"MEI","positions":["MEI","CA","PD"],"eafc":56},{"name":"Bruno Nazário","club":"Henan FC","league":"Outras ligas","age":31,"position":"MEI","positions":[["MEI","CA"]]},{"name":"Estêvão","club":"Chelsea","league":"Premier League","age":19,"games":22,"goals":2,"assists":2,"marketValue":97,"prevGames":30,"prevGoals":12,"prevAssists":8,"titles":["Mundial de Clubes FIFA 2025"],"recent":true,"position":"PD","positions":["PD","PE","MEI"]},{"name":"Rodrygo","club":"Real Madrid","league":"La Liga","age":25,"games":20,"goals":1,"assists":3,"recent":true,"marketValue":80,"titles":["Supercopa da Europa 2024"],"position":"PD","positions":["PD","PE","CA"],"eafc":85,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/05/Rodrygo_2023_%28cropped%29.jpg"},{"name":"Savinho","club":"Manchester City","league":"Premier League","age":22,"games":24,"goals":1,"assists":1,"marketValue":60,"recent":true,"position":"PD","positions":["PD","PE"],"eafc":82,"photo":"https://upload.wikimedia.org/wikipedia/commons/3/3c/Cel_Spellman%2C_John_Stones%2C_Bernardo_Silva_and_Natalie_Pike_at_the_Manchester_City_After_Party%2C_2026_%28cropped%29.jpg"},{"name":"Antony","club":"Real Betis","league":"La Liga","age":26,"games":32,"goals":8,"assists":6,"rating":7.43,"recent":true,"marketValue":30,"titles":[],"position":"PD","positions":["PD","PE"],"eafc":81,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a9/Antony_2022.jpg"},{"name":"David Neres","club":"Napoli","league":"Serie A (Itália)","age":29,"games":16,"goals":3,"assists":3,"rating":6.88,"marketValue":28,"recent":false,"titles":["Serie A 2024-25","Supercopa da Itália 2025"],"position":"PD","positions":["PD","PE"],"eafc":81,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/06/David_Neres_2017.jpg"},{"name":"William Gomes","club":"FC Porto","league":"Primeira Liga (Portugal)","age":20,"games":30,"goals":8,"assists":1,"rating":6.8,"marketValue":25,"titles":["Primeira Liga 2025-26","Golo do Ano Liga Portugal 2025-26"],"recent":false,"position":"PD","positions":["PD","CA","PE"],"eafc":75},{"name":"Luiz Henrique","club":"Zenit","league":"Liga Russa","age":25,"games":26,"goals":8,"assists":4,"rating":7.05,"marketValue":24,"recent":true,"titles":["Copa Libertadores 2024","Campeonato Russo 2024-25"],"position":"PD","positions":["PD","PE"],"real":true,"eafc":82,"photo":"https://upload.wikimedia.org/wikipedia/commons/1/1e/Luiz_Henrique_Brazil_V_Morocco_13_June_2026-147.jpg"},{"name":"Luis Henrique","club":"Inter de Milão","league":"Serie A (Itália)","age":24,"games":30,"goals":1,"assists":2,"marketValue":24,"recent":false,"titles":["Serie A 2025-26","Coppa Italia 2025-26"],"position":"PD","positions":["PD","MEI"],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/2a/Lens_-_Marseille_%2822-01-2022%29_14.jpg"},{"name":"Allan","club":"Palmeiras","league":"Brasileirão Série A","age":22,"marketValue":20,"games":17,"goals":4,"assists":2,"recent":false,"position":"PD","positions":[["PD","MEI","PE"]],"photo":"https://upload.wikimedia.org/wikipedia/commons/3/3d/Allan-palmeiras-sport-ago-25-4.jpg"},{"name":"Malcom","club":"Al-Hilal","league":"Saudi Pro League","age":29,"games":29,"goals":7,"assists":9,"rating":7.63,"marketValue":18,"titles":["Supercopa da Arábia Saudita 2024"],"position":"PD","positions":["PD","PE"],"eafc":82,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/af/Malcom_in_2021.jpg"},{"name":"Pepê","club":"FC Porto","league":"Primeira Liga (Portugal)","age":29,"games":30,"goals":3,"assists":4,"rating":7.2,"marketValue":17,"titles":["Primeira Liga 2025-26","Taça de Portugal 2023","Taça de Portugal 2024"],"recent":false,"position":"PD","positions":["PD","PE","VOL"]},{"name":"Ângelo","club":"Al-Nassr","league":"Saudi Pro League","age":21,"goals":4,"assists":6,"rating":7.58,"marketValue":15,"titles":["Campeonato Saudita 2025-26"],"position":"PD","positions":["PD","PE","MEI"]},{"name":"Pedrinho","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":28,"games":27,"goals":7,"assists":5,"rating":7.41,"marketValue":10,"titles":["Copa da Ucrânia 2024","Copa da Ucrânia 2025"],"position":"PD","positions":[[["PE","PD","MEI"],"MEI","LE","PE"]],"eafc":74},{"name":"Alisson Santana","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":20,"games":17,"goals":4,"assists":3,"rating":7.13,"marketValue":9,"titles":["Copa da Ucrânia 2025"],"position":"PD","positions":[["PD","PE","MEI","CA"]],"real":true,"eafc":70},{"name":"Tetê","club":"Grêmio","league":"Brasileirão Série A","age":26,"marketValue":9,"games":14,"recent":false,"position":"PD","positions":["PD","PE","MEI"]},{"name":"Matheus Gonçalves","club":"Al-Ahli","league":"Saudi Pro League","age":20,"games":18,"goals":1,"assists":2,"marketValue":9,"titles":["AFC Champions League Elite 2026"],"position":"PD","positions":["PD","MEI"]},{"name":"Luiz Araújo","club":"Flamengo","league":"Brasileirão Série A","age":30,"marketValue":7,"titles":["Libertadores 2025","Brasileirão 2025","Campeonato Carioca 2025","Supercopa do Brasil 2025"],"position":"PD","positions":["PD","PE"]},{"name":"André Luiz","club":"Olympiacos","league":"Super League (Grécia)","age":24,"games":5,"goals":0,"assists":0,"rating":6.69,"marketValue":7,"recent":false,"position":"PD","positions":[["PD","PE","MEI"]]},{"name":"Lucas Ferreira","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":20,"marketValue":7,"titles":["Copa da Ucrânia 2025"],"position":"PD","positions":[["PD","MEI","PE"]],"eafc":67},{"name":"Lucas Ronier","club":"Coritiba","league":"Brasileirão Série A","age":21,"marketValue":6,"position":"PD","positions":[["PD","PE","CA"]]},{"name":"Gabriel Strefezza","club":"Parma","league":"Serie A (Itália)","age":28,"games":14,"goals":2,"assists":2,"rating":7.02,"prevGoals":6,"prevAssists":4,"marketValue":6,"recent":false,"titles":[],"position":"PD","positions":["PD","MEI"],"eafc":76},{"name":"Lucas Barbosa","club":"RB Bragantino","league":"Brasileirão Série A","age":25,"marketValue":6,"goals":4,"assists":2,"titles":[],"position":"PD","positions":["PD","PE"],"eafc":73,"photo":"https://upload.wikimedia.org/wikipedia/commons/f/f7/Lucas_Barbosa_2_-_Palmeiras_1-0_Santos_-_18-09-2022.png"},{"name":"Robinho Junior","club":"Santos","league":"Brasileirão Série A","age":18,"marketValue":5,"recent":false,"position":"PD","positions":["PD","MEI"],"eafc":59,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/08/Robinho_Jr_07-05-2025.png"},{"name":"Kayky","club":"Internacional","league":"Brasileirão Série A","age":23,"marketValue":5,"recent":false,"position":"PD","positions":[["PD","PE"]],"eafc":65,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a1/Kayky_da_Silva_Chagas.jpg"},{"name":"Weslley Patati","club":"AZ Alkmaar","league":"Eredivisie","age":22,"games":27,"goals":2,"assists":3,"prevGames":39,"prevGoals":13,"prevAssists":9,"titles":["Campeonato Israelense 2025","Copa da Holanda 2025","Brasileirão Série B 2023"],"marketValue":4.5,"recent":false,"position":"PD","positions":["PD","PE"]},{"name":"Gustavo Silva","club":"Vitória de Guimarães","league":"Primeira Liga (Portugal)","age":27,"goals":5,"assists":2,"rating":6.87,"marketValue":4,"titles":["Taça da Liga 2025-26"],"recent":false,"position":"PD","positions":["PD","PE","CA"],"eafc":71},{"name":"Kaio César","club":"Corinthians","league":"Brasileirão Série A","age":22,"marketValue":4,"recent":false,"position":"PD","positions":["PD","PE"]},{"name":"Antonio Galeano","club":"Mirassol","league":"Brasileirão Série A","age":26,"marketValue":3.5,"recent":false,"position":"PD","positions":["PD","PE"]},{"name":"Henrique Carmo","club":"CSKA Moscou","league":"Liga Russa","age":19,"marketValue":3.5,"position":"PD","positions":["PD","PE"],"eafc":69},{"name":"Júnior Santos","club":"Botafogo","league":"Brasileirão Série A","age":31,"marketValue":3,"games":9,"goals":1,"assists":0,"recent":false,"position":"PD","positions":["PD","CA","PE"]},{"name":"Negueba","club":"Mirassol","league":"Brasileirão Série A","age":26,"goals":5,"marketValue":3,"recent":false,"position":"PD","positions":[["PE","PD"]]},{"name":"Carlos Júnior","club":"Al-Shabab","league":"Saudi Pro League","age":30,"marketValue":3,"position":"PD","positions":["PD","PE","CA"]},{"name":"Vitinho","club":"Club Tijuana","league":"Liga MX (México)","age":25,"prevGames":30,"prevGoals":7,"prevAssists":3,"marketValue":3,"recent":false,"position":"PD","positions":[[[[[[["PD CA LD","PE","PD"],"PD","PE"],"PD","PE"],"LD","PD"],"PD","PE","CA"],"PD","PE"]],"eafc":72},{"name":"Adson","club":"Vasco da Gama","league":"Brasileirão Série A","age":25,"marketValue":2.5,"titles":[],"position":"PD","positions":["PD","PE"],"eafc":71,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/21/Adson-Corinthians-jul-2022.jpg"},{"name":"Junior Messias","club":"Genoa","league":"Serie A (Itália)","age":35,"games":20,"goals":3,"assists":1,"rating":6.79,"marketValue":2.5,"recent":false,"titles":[],"position":"PD","positions":["PD","MEI"],"eafc":72},{"name":"Erick","club":"Vitória","league":"Brasileirão Série A","age":28,"marketValue":2.5,"position":"PD","positions":["PD","PE"]},{"name":"Gustavo Prado","club":"Ceará","league":"Brasileirão Série B","age":21,"marketValue":2.5,"position":"PD","positions":["PD","MEI"]},{"name":"Lucas Moura","club":"São Paulo","league":"Brasileirão Série A","age":33,"marketValue":2,"goals":3,"recent":false,"titles":["Copa Libertadores 2011","Campeonato Paulista 2024"],"position":"PD","positions":[["PD","MEI","PE"]],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/26/2020-03-10_Fu%C3%9Fball%2C_M%C3%A4nner%2C_UEFA_Champions_League_Achtelfinale%2C_RB_Leipzig_-_Tottenham_Hotspur_1DX_3703_by_Stepro.jpg"},{"name":"Leo Baptistao","club":"UD Almeria","league":"La Liga 2 (Espanha)","age":33,"games":36,"goals":9,"assists":2,"rating":6.85,"marketValue":2,"recent":false,"titles":[],"position":"PD","positions":["PD","CA","PE"],"eafc":73},{"name":"Lucas Ribeiro","club":"Cultural Leonesa","league":"La Liga 2 (Espanha)","age":27,"games":27,"goals":5,"assists":2,"marketValue":1.5,"recent":false,"titles":[],"position":"PD","positions":["PD","PE"],"eafc":68},{"name":"Bruno Tabata","club":"Internacional","league":"Brasileirão Série A","age":29,"marketValue":1.5,"recent":false,"position":"PD","positions":["PD","MEI","PE"],"eafc":74,"photo":"https://upload.wikimedia.org/wikipedia/commons/e/e6/Bruno-Tabata-Internacional.png"},{"name":"Mateus","club":"Nagoya Grampus","league":"J-League (Japão)","goals":5,"assists":2,"marketValue":1.5,"position":"PD","positions":["PD","PE","MEI"]},{"name":"David","club":"Vasco da Gama","league":"Brasileirão Série A","age":30,"marketValue":1.5,"titles":[],"position":"PD","positions":[["PD","CA","PE"]],"eafc":74},{"name":"Dudu","club":"Aris","league":"Super League (Grécia)","age":23,"games":20,"goals":3,"assists":1,"rating":6.53,"marketValue":1.3,"recent":false,"position":"PD","positions":[[["PD","PE","MEI","CA"],"MEI"]]},{"name":"Jean Patric","club":"Vissel Kobe","league":"J-League (Japão)","marketValue":1,"position":"PD","positions":[["PD","PE","MEI"]]},{"name":"Marcinho","club":"Kawasaki Frontale","league":"J-League (Japão)","marketValue":1,"position":"PD","positions":[["PD","PE","LD"]]},{"name":"Marco Túlio","club":"Kyoto Sanga","league":"J-League (Japão)","marketValue":0.8,"position":"PD","positions":[["PD","PE"]]},{"name":"Élber","club":"Kashima Antlers","league":"J-League (Japão)","titles":["Campeão J1 League 2025"],"marketValue":0.8,"position":"PD","positions":[["PD","PE","CA"]]},{"name":"Marcos Guilherme","club":"FC Tokyo","league":"J-League (Japão)","marketValue":0.8,"position":"PD","positions":["PD","PE","MEI"]},{"name":"Stênio","club":"Karpaty Lviv","league":"Liga Ucraniana","age":23,"marketValue":0.6,"position":"PD","positions":[["PD","PE","CA"]]},{"name":"Yago Pikachu","club":"Remo","league":"Brasileirão Série A","age":34,"marketValue":0.6,"position":"PD","positions":[["PD","LD","MEI"]],"eafc":67,"photo":"https://upload.wikimedia.org/wikipedia/commons/7/7a/Sulamericana_CUP_2023_Semifinal_-_Corinthians_x_Fortaleza-CE_%2853553783237%29.jpg"},{"name":"Ari Moura","club":"Metalist 1925 Kharkiv","league":"Liga Ucraniana","age":29,"marketValue":0.5,"position":"PD","positions":["PD"]},{"name":"David Kaiki","club":"Damac","league":"Saudi Pro League","age":22,"marketValue":0.275,"position":"PD","positions":["PD","PE"],"eafc":53},{"name":"Mateus Castro","club":"Nagoya Grampus","league":"J-League (Japão)","position":"PD","positions":["PD","PE"]},{"name":"Edmilson Júnior","club":"Al-Duhail","league":"Outras ligas","age":31,"position":"PD","positions":["PD","MEI"]},{"name":"Ruan","club":"Alanyaspor","league":"Süper Lig (Turquia)","age":20,"games":28,"goals":1,"titles":[],"position":"PD","positions":[["PD","MEI","ZAG"]],"eafc":65},{"name":"Yarlen","club":"CD Tondela","age":20,"league":"Primeira Liga (Portugal)","position":"PD","positions":["PD","PE"],"eafc":64},{"name":"Yan Matheus","club":"Qatar SC","league":"Outras ligas","age":27,"position":"PD","positions":[["PD","PE"]]},{"name":"Everton Galdino","club":"FC Tokyo","league":"J-League (Japão)","position":"PD","positions":["PD","PE"]},{"name":"Diego Carioca","club":"Kolos Kovalivka","league":"Liga Ucraniana","recent":false,"position":"PD","positions":["PD","PE"]},{"name":"Dudu Teodoro","club":"Mazatlán FC","league":"Liga MX (México)","age":25,"prevGames":22,"prevGoals":3,"prevAssists":2,"position":"PD","positions":["PD","CA"]},{"name":"Gabriel Silva","club":"CD Santa Clara","age":23,"league":"Primeira Liga (Portugal)","position":"PD","positions":["PD","PE"],"eafc":74},{"name":"Erick Farias","club":"Ulsan HD","league":"Outras ligas","position":"PD","positions":["PD","CA"],"eafc":69},{"name":"Maranhão","club":"CD Tondela","age":27,"league":"Primeira Liga (Portugal)","position":"PD","positions":["PD","PE"]},{"name":"Marinho","club":"Vitória","league":"Brasileirão Série A","age":36,"position":"PD","positions":["PD","PE","CA"],"photo":"https://upload.wikimedia.org/wikipedia/commons/9/93/16_11_2019_Partida_de_futebol_Santos_e_S%C3%A3o_Paulo_Marinho.jpg"},{"name":"Gabriel Veron","club":"CD Nacional","age":23,"league":"Primeira Liga (Portugal)","games":15,"goals":1,"position":"PD","positions":["PD","PE"],"eafc":72},{"name":"Vinicius Junior","club":"Real Madrid","league":"La Liga","age":25,"games":36,"goals":16,"assists":5,"rating":7.65,"prevGames":30,"prevGoals":11,"prevAssists":8,"marketValue":150,"recent":true,"titles":["Supercopa da Europa 2024","Liga das Nações CONMEBOL-UEFA (Finalíssima)","The Best FIFA 2024","Bola de Prata (2º Ballon d\u0027Or) 2024"],"position":"PE","positions":["PE","CA"],"real":true,"eafc":89,"photo":"https://upload.wikimedia.org/wikipedia/commons/1/10/Vin%C3%ADcius_J%C3%BAnior_Brazil_V_Morocco_13_June_2026-207_%28cropped%29.jpg"},{"name":"Raphinha","club":"FC Barcelona","league":"La Liga","age":29,"games":24,"goals":13,"assists":3,"prevGames":36,"prevGoals":18,"prevAssists":9,"marketValue":90,"recent":true,"titles":["La Liga 2024-25","Copa del Rey 2024-25","Supercopa da Espanha 2024-25","La Liga 2025-26","Supercopa da Espanha 2025-26"],"position":"PE","positions":["PE","PD","CA"],"real":true,"eafc":89,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/b4/Raphinha_Brazil_V_Morocco_13_June_2026-133_%28cropped%29.jpg"},{"name":"Gabriel Martinelli","club":"Arsenal","league":"Premier League","age":24,"games":28,"goals":1,"assists":3,"marketValue":50,"titles":["Premier League 2025-26"],"recent":false,"position":"PE","positions":["PE","PD","CA"],"real":true,"eafc":81,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/81/Gabriel_Martinelli_Brazil_V_Morocco_13_June_2026-144.jpg"},{"name":"Igor Paixão","club":"Olympique de Marseille","league":"Ligue 1","age":25,"games":30,"goals":6,"assists":5,"marketValue":35,"titles":["Jogador do Ano da Holanda (Eredivisie) 2024-25"],"recent":true,"position":"PE","positions":["PE","PD"]},{"name":"Kevin","club":"Fulham","league":"Premier League","age":22,"games":26,"goals":1,"assists":1,"marketValue":30,"recent":false,"position":"PE","positions":[["PE","PD"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/2/23/Kevin_13092025_%283%29.jpg"},{"name":"Galeno","club":"Al-Ahli","league":"Saudi Pro League","age":28,"games":23,"goals":1,"assists":7,"marketValue":20,"titles":["AFC Champions League Elite 2026"],"position":"PE","positions":["PE","PD"],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/9/93/Galeno.jpg"},{"name":"Samuel Lino","club":"Flamengo","league":"Brasileirão Série A","age":26,"marketValue":15,"games":17,"goals":4,"assists":6,"recent":false,"position":"PE","positions":["PE","PD","LE"],"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/7/7a/Samuel_Lino%2C_FC_Salzburg_vs._Atletico_Madrid_%282025-01-29_UEFA_Championsleague%29_83_%28cropped%29.jpg"},{"name":"Luis Guilherme","club":"West Ham United","league":"Premier League","age":19,"games":5,"goals":0,"assists":0,"marketValue":12,"recent":false,"position":"PE","positions":["PE","PD"],"eafc":71},{"name":"Erick Pulga","club":"Bahia","league":"Brasileirão Série A","age":25,"marketValue":11,"titles":["Copa do Nordeste 2025"],"position":"PE","positions":[["PE","PD","CA"]],"eafc":77},{"name":"Léo Scienza","club":"Southampton","league":"Championship (Inglaterra)","age":27,"games":37,"goals":7,"assists":10,"marketValue":10,"titles":["Southampton Jogador da Temporada 2025-26"],"recent":false,"position":"PE","positions":["PE","MEI","PD"]},{"name":"Alisson Santos","club":"Napoli","league":"Serie A (Itália)","age":24,"games":14,"marketValue":8,"recent":false,"titles":[],"position":"PE","positions":["PE","PD"],"real":true,"eafc":70},{"name":"Marquinhos","club":"Spartak Moscou","league":"Liga Russa","age":26,"goals":5,"assists":6,"marketValue":7,"prevGames":36,"prevGoals":3,"prevAssists":10,"position":"PE","positions":[[["ZAG","PE","PD"],"PD","PE"]],"real":true,"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/c/cc/Marquinhos_%281999%29_in_2025.jpg"},{"name":"Newerton","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":21,"games":29,"goals":6,"rating":7.09,"marketValue":7,"titles":["Copa da Ucrânia 2025"],"position":"PE","positions":[["PE","PD","MEI"]],"eafc":70},{"name":"Everton Cebolinha","club":"Flamengo","league":"Brasileirão Série A","age":30,"marketValue":7,"titles":["Libertadores 2025","Brasileirão 2025","Campeonato Carioca 2025","Supercopa do Brasil 2025"],"position":"PE","positions":["PE","PD"],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/6/67/EvertonBenfica1.jpg"},{"name":"Helinho","club":"Toluca","league":"Liga MX (México)","age":26,"games":35,"goals":11,"assists":9,"prevGames":24,"prevGoals":3,"prevAssists":0,"rating":7.4,"marketValue":6.5,"titles":["Clausura MX 2025","Apertura MX 2025","Campeón de Campeones 2025","CONCACAF Champions Cup 2025"],"recent":false,"position":"PE","positions":[["PE","PD"]],"eafc":76},{"name":"Matheus Martins","club":"Botafogo","league":"Brasileirão Série A","age":22,"marketValue":6,"games":15,"goals":4,"assists":0,"recent":false,"position":"PE","positions":[["PE","PD"]],"eafc":71},{"name":"Ronald","club":"Swansea City","league":"Championship (Inglaterra)","age":24,"goals":4,"marketValue":6,"recent":false,"position":"PE","positions":[[[["PE","PD","MEI","VOL"],"MEI","VOL"],"MEI","VOL"]],"eafc":70},{"name":"Eguinaldo","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":21,"games":21,"goals":7,"rating":7.04,"marketValue":5,"titles":["Copa da Ucrânia 2024","Copa da Ucrânia 2025"],"position":"PE","positions":[["PE","CA","PD"]],"eafc":70},{"name":"Sorriso","club":"FC Famalicão","league":"Primeira Liga (Portugal)","age":25,"games":17,"goals":3,"assists":3,"prevGames":29,"prevGoals":8,"prevAssists":4,"marketValue":5,"titles":[],"recent":false,"position":"PE","positions":["PE","PD","CA"],"eafc":74},{"name":"Ferreirinha","club":"São Paulo","league":"Brasileirão Série A","age":28,"marketValue":4,"goals":4,"recent":false,"position":"PE","positions":[["PE","PD","CA"]],"eafc":73},{"name":"Yuri César","club":"Shabab Al Ahli","league":"Outras ligas","age":26,"prevGames":26,"prevGoals":5,"marketValue":4,"position":"PE","positions":["PE","PD","CA"]},{"name":"Guilherme Smith","club":"Union Saint-Gilloise","league":"Pro League (Bélgica)","age":23,"games":2,"goals":0,"assists":0,"marketValue":4,"recent":false,"position":"PE","positions":[[["PE","CA","MEI","VOL"],"PE","PD","CA"]],"eafc":62},{"name":"Nathan Fernandes","club":"Botafogo","league":"Brasileirão Série A","age":21,"marketValue":4,"recent":false,"position":"PE","positions":["PE","PD"],"eafc":67},{"name":"Biel","club":"Al-Taawoun","league":"Saudi Pro League","age":25,"marketValue":4,"position":"PE","positions":["PE","PD"],"eafc":71},{"name":"Vinicinho","club":"RB Bragantino","league":"Brasileirão Série A","age":22,"marketValue":3.5,"titles":[],"position":"PE","positions":[["PE","PD"]],"eafc":72},{"name":"Wanderson","club":"Cruzeiro","league":"Brasileirão Série A","age":31,"marketValue":3,"games":14,"goals":1,"assists":0,"recent":false,"position":"PE","positions":[["PE","PD","CA"]],"eafc":76},{"name":"Arthur Gomes","club":"Dinamo Moscou","league":"Liga Russa","age":27,"marketValue":3,"position":"PE","positions":["PE","PD"],"eafc":74},{"name":"Breno Lopes","club":"Coritiba","league":"Brasileirão Série A","age":30,"marketValue":3,"titles":["Libertadores 2020 (Palmeiras)","Copa do Brasil 2020 (Palmeiras)"],"position":"PE","positions":["PE","CA"],"photo":"https://upload.wikimedia.org/wikipedia/commons/9/99/Breno-lopes-palmeiras-wikipedia-2021_%28cropped%29.jpg"},{"name":"Robert","club":"FC Copenhagen","league":"Outras ligas","age":21,"marketValue":2.5,"recent":false,"position":"PE","positions":["PE","PD"],"eafc":69},{"name":"Victor Sa","club":"Krasnodar","league":"Liga Russa","age":32,"marketValue":2.5,"titles":["Campeonato Russo 2024-25"],"position":"PE","positions":["PE","PD"],"eafc":74},{"name":"Alesson","club":"Mirassol","league":"Brasileirão Série A","age":27,"goals":8,"marketValue":2.5,"recent":false,"position":"PE","positions":[["CA","PD","PE"]],"eafc":72},{"name":"Rick","club":"Talleres","league":"Liga Argentina","age":26,"games":15,"goals":2,"assists":1,"prevGames":30,"prevGoals":6,"prevAssists":7,"marketValue":2.2,"titles":["Campeonato Búlgaro 2022","Campeonato Búlgaro 2023","Campeonato Búlgaro 2024","Copa da Bulgária 2023","Supercopa da Bulgária 2022","Supercopa da Bulgária 2023"],"position":"PE","positions":[["PE","PD"]],"eafc":65},{"name":"Rafael Ratão","club":"Cerezo Osaka","league":"J-League (Japão)","age":29,"goals":11,"assists":3,"marketValue":2,"position":"PE","positions":[["CA","PE"]]},{"name":"Luiz Fernando","club":"Fortaleza","league":"Brasileirão Série B","age":29,"marketValue":1.8,"titles":[],"position":"PE","positions":[[["PE","PD"],"PD","PE","CA"]]},{"name":"Wellington Silva","club":"Qingdao Hainiu","league":"Outras ligas","age":32,"games":29,"goals":11,"marketValue":1.5,"position":"PE","positions":[["PE","PD","CA"]],"eafc":70},{"name":"Felipe Anderson","club":"Palmeiras","league":"Brasileirão Série A","age":33,"marketValue":1.5,"titles":["Campeonato Paulista 2026"],"position":"PE","positions":["PE","MEI","PD"],"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/e/ef/Felipe-Anderson-Palmeiras-Criciuma-sep24.jpg"},{"name":"Fábio Martins","club":"Al-Hazem","league":"Saudi Pro League","age":32,"marketValue":1.5,"position":"PE","positions":["PE","PD","MEI"]},{"name":"Adriano","club":"Raków Częstochowa","league":"Outras ligas","age":23,"games":12,"goals":0,"assists":1,"marketValue":1,"recent":false,"position":"PE","positions":[["PE","LE","PD","MEI"]],"eafc":65},{"name":"Maurício Garcez","club":"Chapecoense","league":"Brasileirão Série A","age":29,"marketValue":0.8,"position":"PE","positions":["PE","PD"]},{"name":"Ênio","club":"Chapecoense","league":"Brasileirão Série A","age":25,"marketValue":0.8,"position":"PE","positions":["PE","PD"]},{"name":"Kenedy","club":"Pachuca","league":"Liga MX (México)","age":30,"games":36,"goals":9,"assists":3,"prevGames":5,"prevGoals":0,"prevAssists":0,"rating":7.2,"marketValue":0.75,"recent":false,"position":"PE","positions":["PE","LE"],"eafc":73},{"name":"Gustavo Furtado","club":"FC Sochi","league":"Liga Russa","age":25,"marketValue":0.6,"position":"PE","positions":["PE"]},{"name":"Alef Manga","club":"Remo","league":"Brasileirão Série A","age":31,"marketValue":0.6,"position":"PE","positions":[["PE","CA","PD"]],"eafc":72,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a1/Brasileir%C3%A3o_S%C3%A9rie_A-_Bragantino_4_x_2_Coritiba_%2852151874453%29_%28Alef_Manga%29.jpg"},{"name":"Klayver","club":"Rukh Lviv","league":"Liga Ucraniana","age":22,"marketValue":0.5,"position":"PE","positions":[["PE","ZAG"]]},{"name":"Adaílton","club":"Yokohama FC","league":"J-League (Japão)","marketValue":0.5,"position":"PE","positions":["PE","PD"]},{"name":"Maycon Cardozo","club":"Bayern de Munique","league":"Bundesliga","age":17,"games":2,"goals":0,"assists":0,"marketValue":0.5,"recent":false,"titles":[],"position":"PE","positions":["PE","PD"],"eafc":59},{"name":"Wesley Pomba","club":"NK Veres Rivne","league":"Liga Ucraniana","age":24,"marketValue":0.5,"position":"PE","positions":["PE"]},{"name":"Farley Rosa","club":"Panetolikos","league":"Super League (Grécia)","age":32,"games":10,"goals":2,"assists":2,"rating":7.39,"marketValue":0.3,"recent":false,"position":"PE","positions":["PE","PD","CA"]},{"name":"Guilherme Bahia","club":"NK Veres Rivne","league":"Liga Ucraniana","age":20,"marketValue":0.2,"position":"PE","positions":["PE"]},{"name":"Cauã Paixão","club":"Polissya Zhytomyr","league":"Liga Ucraniana","recent":false,"position":"PE","positions":["PE","CA","PD"]},{"name":"Paulinho Bóia","club":"CD Nacional","age":28,"league":"Primeira Liga (Portugal)","position":"PE","positions":["PE","PD"]},{"name":"Serginho","club":"Fatih Karagümrük","league":"Süper Lig (Turquia)","age":31,"games":32,"goals":8,"titles":[],"position":"PE","positions":[[["PE","PD","CA"],"MEI","PE"]],"eafc":67},{"name":"Davidson","club":"Qingdao West Coast","league":"Outras ligas","position":"PE","positions":["PE","PD"]},{"name":"Marrony","club":"Remo","league":"Brasileirão Série A","age":27,"position":"PE","positions":["PE","PD"],"eafc":65},{"name":"Clarismario Santos","club":"Melbourne Victory","league":"Outras ligas","position":"PE","positions":["PE","PD"],"eafc":59},{"name":"Vinícius Lopes","club":"CD Santa Clara","age":27,"league":"Primeira Liga (Portugal)","games":28,"goals":8,"assists":1,"position":"PE","positions":["PE","CA","PD"],"real":true},{"name":"Lincoln","club":"FC Alverca","age":27,"league":"Primeira Liga (Portugal)","games":32,"goals":2,"assists":5,"position":"PE","positions":["PE","MEI","PD"],"eafc":74},{"name":"Emerson Negueba","club":"Jeju United","league":"Outras ligas","age":25,"position":"PE","positions":["PE","PD"]},{"name":"Danilo Gomes","club":"Albirex Niigata","league":"J-League (Japão)","position":"PE","positions":["PE","PD"],"real":true},{"name":"Madson","club":"FC Juárez","league":"Liga MX (México)","age":26,"recent":false,"position":"PE","positions":[[["PE","CA","MEI","PD"],"LD"]]},{"name":"Thiago Andrade","club":"Cerezo Osaka","league":"J-League (Japão)","position":"PE","positions":["PE","PD"]},{"name":"Lourency","club":"Khor Fakkan","league":"Outras ligas","position":"PE","positions":["PE","PD"]},{"name":"Gabrielzinho","club":"Shanghai Port","league":"Outras ligas","titles":["Chinese Super League 2025 (Shanghai Port)"],"position":"PE","positions":["PE","PD"],"eafc":68},{"name":"Igor Thiago","club":"Brentford","league":"Premier League","age":25,"games":38,"goals":22,"assists":1,"rating":7.3,"marketValue":65,"titles":["Vice-artilheiro da Premier League 2025-26"],"recent":true,"position":"CA","positions":["CA"],"real":true,"eafc":75},{"name":"João Pedro","club":"Chelsea","league":"Premier League","age":24,"games":32,"goals":15,"assists":5,"rating":7.18,"marketValue":60,"titles":["Mundial de Clubes FIFA 2025","Chelsea Jogador da Temporada 2025-26"],"recent":true,"position":"CA","positions":[[[[[[["CA","MEI","PD"],"CA"],"LD"],"CA"],"MEI"],"LD"]]},{"name":"Matheus Cunha","club":"Manchester United","league":"Premier League","age":26,"games":33,"goals":10,"assists":2,"marketValue":55,"prevGames":33,"prevGoals":15,"recent":true,"position":"CA","positions":[[["CA","MEI","PE","GOL"],"GOL"]],"real":true,"eafc":83,"photo":"https://upload.wikimedia.org/wikipedia/commons/3/31/Matheus_Cunha_Brazil_V_Morocco_13_June_2026-178_%28cropped%29.jpg"},{"name":"Endrick","club":"Olympique Lyonnais","league":"Ligue 1","age":19,"games":16,"goals":5,"assists":7,"marketValue":40,"titles":["Campeonato Brasileiro 2023 (Palmeiras)","La Liga 2024-25 (Real Madrid)","Jogador do Mês da Ligue 1 - janeiro 2026"],"recent":true,"position":"CA","positions":[["CA","PE"]],"real":true,"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/d/d6/Team_Brazil_at_2026_FIFA_World_Cup_by_YantsImages_%28Endrick%29.jpg"},{"name":"Vitor Roque","club":"Palmeiras","league":"Brasileirão Série A","age":21,"marketValue":38,"goals":20,"assists":5,"games":54,"recent":true,"titles":["Campeonato Paulista 2026"],"position":"CA","positions":[["CA","PD"]],"eafc":86,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a3/Vitor-roque-palmeiras-internacional-sep2025.jpg"},{"name":"Evanilson","club":"AFC Bournemouth","league":"Premier League","age":26,"games":36,"goals":6,"assists":1,"marketValue":35,"recent":false,"position":"CA","positions":["CA"],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/e/e2/Evanilson_2024.jpg"},{"name":"Gabriel Jesus","club":"Arsenal","league":"Premier League","age":29,"games":13,"goals":2,"assists":0,"marketValue":30,"titles":["Premier League 2025-26"],"recent":false,"position":"CA","positions":["CA","PD"],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/6/69/Gabriel_Jesus_fala_sobre_elimina%C3%A7%C3%A3o_do_Manchester_City_Aprendizado_0-2_screenshot.png"},{"name":"Richarlison","club":"Tottenham Hotspur","league":"Premier League","age":29,"games":32,"goals":11,"assists":4,"marketValue":25,"recent":false,"position":"CA","positions":["CA","PE"],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a2/Richarlison_%C3%A9_homenageado_na_ALES_%2810.July.2019%29_12_%28cropped2%29.jpg"},{"name":"Kaio Jorge","club":"Cruzeiro","league":"Brasileirão Série A","age":24,"marketValue":25,"goals":21,"assists":8,"games":33,"recent":true,"titles":["Artilheiro do Brasileirão 2025","Artilheiro da Copa do Brasil 2025"],"position":"CA","positions":[["CA"]],"photo":"https://upload.wikimedia.org/wikipedia/commons/3/32/Kaio_Jorge.png"},{"name":"Yuri Alberto","club":"Corinthians","league":"Brasileirão Série A","age":25,"marketValue":23,"games":58,"goals":19,"assists":4,"recent":true,"titles":["Campeonato Paulista 2025","Copa do Brasil 2025"],"position":"CA","positions":[["CA"]],"eafc":84,"photo":"https://upload.wikimedia.org/wikipedia/commons/8/89/Brasileir%C3%A3o_2022_Corinthians_2x0_Cuiab%C3%A1_%2852661306474%29_%28cropped%29.jpg"},{"name":"Rodrigo Muniz","club":"Fulham","league":"Premier League","age":25,"games":21,"goals":2,"assists":1,"marketValue":22,"recent":false,"position":"CA","positions":["CA"],"eafc":75},{"name":"Igor Jesus","club":"Nottingham Forest","league":"Premier League","age":25,"games":35,"goals":6,"assists":4,"marketValue":22,"titles":["Artilheiro da Europa League 2025-26"],"recent":true,"position":"CA","positions":["CA"],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/0f/Igor_Jesus_Shabab_Al_Ahli.png"},{"name":"Rômulo","club":"RB Leipzig","league":"Bundesliga","age":24,"games":30,"goals":9,"assists":4,"rating":7.06,"prevGames":33,"prevGoals":17,"prevAssists":10,"marketValue":20,"recent":false,"titles":[],"position":"CA","positions":[[[["CA","PE","PD","VOL","MEI","ZAG","LD"],"MEI","VOL"],"MEI","CA"]]},{"name":"Giovane","club":"Napoli","league":"Serie A (Itália)","age":22,"games":33,"goals":3,"assists":4,"marketValue":20,"recent":false,"titles":["Supercopa da Itália 2025"],"position":"CA","positions":["CA","PD"],"eafc":68},{"name":"Pedro","club":"Flamengo","league":"Brasileirão Série A","age":29,"marketValue":20,"games":17,"goals":10,"assists":4,"recent":true,"titles":["Libertadores 2025","Supercopa do Brasil 2025"],"position":"CA","positions":[[[["PE","CA","PD"],"CA"],"CA"]],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/1/18/2025-02-18_Pedro_Guilherme_Abreu_dos_Santos.jpg"},{"name":"Marcos Leonardo","club":"Al-Hilal","league":"Saudi Pro League","age":23,"marketValue":20,"recent":true,"position":"CA","positions":["CA"],"eafc":79,"photo":"https://upload.wikimedia.org/wikipedia/commons/9/94/Marcos_Leonardo_apresentado_ao_Benfica_em_2024_%28cropped%29.jpg"},{"name":"Felipe Augusto","club":"Trabzonspor","league":"Süper Lig (Turquia)","age":21,"games":37,"goals":15,"marketValue":15,"titles":[],"position":"CA","positions":["CA"],"eafc":67},{"name":"Kauã Elias","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":20,"games":26,"goals":8,"assists":5,"rating":7.18,"marketValue":15,"titles":["Copa da Ucrânia 2025"],"position":"CA","positions":[["CA"]],"eafc":71},{"name":"Emersonn","club":"Toulouse FC","league":"Ligue 1","age":21,"games":27,"goals":6,"assists":2,"marketValue":12,"position":"CA","positions":["CA"],"eafc":72},{"name":"Juan","club":"Göztepe","league":"Süper Lig (Turquia)","age":24,"games":32,"goals":11,"marketValue":11,"titles":[],"position":"CA","positions":["CA","PD"],"eafc":72},{"name":"Luca Meirelles","club":"Shakhtar Donetsk","league":"Liga Ucraniana","age":19,"games":23,"goals":8,"rating":6.94,"marketValue":10,"titles":["Copa da Ucrânia 2025"],"position":"CA","positions":[["CA"]],"eafc":65},{"name":"John Kennedy","club":"Fluminense","league":"Brasileirão Série A","age":24,"marketValue":9,"games":35,"goals":14,"recent":false,"titles":["Copa Libertadores 2023"],"position":"CA","positions":[["CA","PE"]],"eafc":74},{"name":"Paulinho","club":"Palmeiras","league":"Brasileirão Série A","age":25,"marketValue":9,"titles":["Campeonato Paulista 2026"],"position":"CA","positions":[[["CA","PE","PD","LE","ZAG"],"CA","PE"]],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/f/f8/Paulinho-Palmeiras-Santos-mai26_%28cropped%29.jpg"},{"name":"Arthur Cabral","club":"Botafogo","league":"Brasileirão Série A","age":28,"marketValue":9,"games":15,"goals":7,"assists":1,"recent":false,"position":"CA","positions":[["CA"]],"eafc":77,"photo":"https://upload.wikimedia.org/wikipedia/commons/d/d1/Arthur_Cabral%2C_atacante_do_Benfica%2C_em_promo%C3%A7%C3%A3o_ao_EAFC_24_%28cropped%29.jpg"},{"name":"Róger Guedes","club":"Al-Rayyan","league":"Outras ligas","age":29,"games":22,"goals":21,"assists":5,"prevGames":22,"prevGoals":21,"prevAssists":1,"marketValue":8,"titles":["Artilheiro da Qatar Stars League 2024-25","Artilheiro da Qatar Stars League 2025-26","QSL Cup 2025-26","Gulf Club Champions League 2025-26","Melhor Jogador da Gulf Club Champions League 2025-26"],"position":"CA","positions":[["CA","PD","MEI","PE"]]},{"name":"Wesley Gassova","club":"Real Sociedad","league":"La Liga","age":21,"games":5,"goals":0,"marketValue":8,"recent":false,"titles":[],"position":"CA","positions":["CA","PE","PD"],"eafc":69},{"name":"Ricardo Mathias","club":"Al-Ahli","league":"Saudi Pro League","age":19,"marketValue":7.5,"position":"CA","positions":["CA"],"eafc":68},{"name":"Carlos Vinícius","club":"Grêmio","league":"Brasileirão Série A","age":31,"marketValue":7,"goals":11,"games":19,"assists":1,"titles":["Melhor jogador de fevereiro do Brasileirão 2026"],"position":"CA","positions":[["CA"]]},{"name":"Gui Negão","club":"Corinthians","league":"Brasileirão Série A","age":19,"marketValue":7,"recent":false,"position":"CA","positions":[["CA"]]},{"name":"Roberto Firmino","club":"Al Sadd","league":"Outras ligas","age":34,"games":21,"goals":13,"prevGames":31,"prevGoals":12,"marketValue":5,"titles":["AFC Champions League Elite 2024-25","MVP da AFC Champions League Elite 2024-25","Qatar Stars League 2025-26"],"position":"CA","positions":[["CA","MEI"]]},{"name":"Clayton","club":"Olympiacos","league":"Super League (Grécia)","age":27,"games":5,"goals":0,"assists":0,"marketValue":5,"recent":false,"position":"CA","positions":[["CA"]],"eafc":75},{"name":"Rony","club":"Santos","league":"Brasileirão Série A","age":31,"marketValue":4.5,"recent":false,"titles":["Copa Libertadores 2021"],"position":"CA","positions":[["CA","PD","PE"]],"eafc":73,"photo":"https://upload.wikimedia.org/wikipedia/commons/c/c3/Rony-Palmeiras-Santos-jan24.jpg"},{"name":"Ryan Francisco","club":"São Paulo","league":"Brasileirão Série A","age":19,"marketValue":4.5,"recent":false,"position":"CA","positions":["CA"],"eafc":69},{"name":"Alemao","club":"Rayo Vallecano","league":"La Liga","age":28,"games":32,"goals":6,"marketValue":4,"recent":false,"titles":[],"position":"CA","positions":["CA","PD"],"eafc":73},{"name":"Thalys","club":"UD Almeria","league":"La Liga 2 (Espanha)","age":21,"games":25,"goals":3,"assists":1,"marketValue":4,"recent":false,"titles":[],"position":"CA","positions":["CA"],"eafc":68},{"name":"Leonardo","club":"Shanghai Port","league":"Outras ligas","age":29,"games":30,"goals":21,"prevGames":29,"prevGoals":21,"marketValue":4,"titles":["Chinese Super League 2025 (Shanghai Port)","Chuteira de Ouro da Chinese Super League 2023"],"position":"CA","positions":["CA","PE"],"eafc":74},{"name":"Rafael Elias","club":"Kyoto Sanga","league":"J-League (Japão)","games":27,"goals":18,"assists":1,"prevGames":15,"prevGoals":11,"prevAssists":1,"titles":["Melhor Contratação J1 League 2025"],"marketValue":4,"position":"CA","positions":[["CA"]]},{"name":"Brenner","club":"Vasco da Gama","league":"Brasileirão Série A","age":26,"marketValue":4,"titles":[],"position":"CA","positions":[["CA"]],"eafc":71},{"name":"Léo Ceará","club":"Kashima Antlers","league":"J-League (Japão)","games":29,"goals":18,"prevGames":37,"prevGoals":21,"rating":7.4,"titles":["Campeão J1 League 2025","MVP J1 League 2025","Melhor Estrangeiro J1 League 2025","Gol do Ano J1 League 2025"],"marketValue":3.5,"position":"CA","positions":[["CA"]]},{"name":"Gabigol","club":"Santos","league":"Brasileirão Série A","age":29,"marketValue":3,"games":27,"goals":14,"recent":false,"position":"CA","positions":["CA"],"eafc":64,"photo":"https://upload.wikimedia.org/wikipedia/commons/e/e6/Gabriel_Barbosa_2022.jpg"},{"name":"Juninho","club":"Pumas UNAM","league":"Liga MX (México)","age":29,"marketValue":3,"recent":false,"position":"CA","positions":[["CA","ZAG"]],"eafc":75},{"name":"Alerrandro","club":"CSKA Moscou","league":"Liga Russa","age":26,"marketValue":3,"position":"CA","positions":[[["CA"],"CA"]],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/4/41/S%C3%A9rie_A1_Bragantino_1x0_Corinthians_%2852632604066%29.jpg"},{"name":"Matheus Saldanha","club":"Sharjah","league":"Outras ligas","age":26,"games":7,"goals":0,"prevGames":22,"prevGoals":10,"marketValue":3,"titles":["Nemzeti Bajnokság I 2024-25 (Ferencváros)"],"position":"CA","positions":["CA"],"eafc":74},{"name":"André Silva","club":"São Paulo","league":"Brasileirão Série A","age":29,"marketValue":3,"recent":false,"position":"CA","positions":[["CA"]]},{"name":"Gabriel Barbosa","club":"Santos","league":"Brasileirão Série A","age":29,"marketValue":3,"recent":false,"position":"CA","positions":["CA"],"eafc":64,"photo":"https://upload.wikimedia.org/wikipedia/commons/e/e6/Gabriel_Barbosa_2022.jpg"},{"name":"Isaac","club":"Hellas Verona","league":"Serie A (Itália)","age":21,"games":3,"marketValue":2.5,"recent":false,"titles":[],"position":"CA","positions":[[["CA","PE","PD"],"CA","PD"]],"eafc":67},{"name":"GB","club":"Fortaleza","league":"Brasileirão Série B","age":21,"marketValue":2,"titles":[],"position":"CA","positions":[["CA","PD"]]},{"name":"Marcos Andre","club":"Real Valladolid","league":"La Liga 2 (Espanha)","age":28,"games":23,"goals":3,"marketValue":2,"recent":false,"titles":[],"position":"CA","positions":["CA"],"eafc":69},{"name":"Cryzan","club":"Shandong Taishan","league":"Outras ligas","age":29,"games":13,"goals":11,"prevGames":24,"prevGoals":11,"marketValue":2,"position":"CA","positions":[["CA"]],"eafc":75},{"name":"Erison","club":"Kawasaki Frontale","league":"J-League (Japão)","games":24,"goals":11,"marketValue":2,"position":"CA","positions":[["CA","PD"]]},{"name":"Lázaro","club":"Al-Najma","league":"Saudi Pro League","age":24,"goals":6,"marketValue":2,"position":"CA","positions":["CA","PE"]},{"name":"Erik","club":"Vissel Kobe","league":"J-League (Japão)","games":26,"goals":9,"marketValue":1.8,"position":"CA","positions":["CA","PD","PE"]},{"name":"Gabriel Taliari","club":"Remo","league":"Brasileirão Série A","age":29,"marketValue":1.8,"position":"CA","positions":["CA"]},{"name":"Derik Lacerda","club":"Baltika Kaliningrad","league":"Liga Russa","age":26,"marketValue":1.5,"position":"CA","positions":["CA"]},{"name":"Thiago Santana","club":"Urawa Red Diamonds","league":"J-League (Japão)","goals":16,"assists":3,"marketValue":1.5,"position":"CA","positions":[["CA"]]},{"name":"Renan Peixoto","club":"Athletico-PR","league":"Brasileirão Série A","age":26,"marketValue":1.5,"position":"CA","positions":["CA"],"eafc":70},{"name":"João Pedro Galvão","club":"Atlético San Luis","league":"Liga MX (México)","age":34,"games":36,"goals":28,"assists":1,"prevGames":36,"prevGoals":6,"prevAssists":2,"marketValue":1.4,"titles":["Artilheiro Apertura 2025","Artilheiro Clausura 2026"],"recent":false,"position":"CA","positions":["CA","PD"]},{"name":"Luciano","club":"São Paulo","league":"Brasileirão Série A","age":33,"prevGames":22,"prevGoals":7,"prevAssists":3,"marketValue":1.3,"titles":["Supercopa do Brasil 2024"],"recent":false,"position":"CA","positions":[["CA","PE","MEI"]],"eafc":78,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/bb/Luciano-Sao-Paulo-Juventude-jun-2022_%28cropped%29.jpg"},{"name":"Felippe Cardoso","club":"Al-Najma","league":"Saudi Pro League","age":27,"goals":3,"marketValue":1.2,"position":"CA","positions":[["CA"]],"eafc":65},{"name":"Welton","club":"Gamba Osaka","league":"J-League (Japão)","games":17,"goals":1,"assists":2,"marketValue":1.2,"position":"CA","positions":[["CA","PE","PD"]]},{"name":"Anderson Lopes","club":"Yokohama F. Marinos","league":"J-League (Japão)","games":20,"goals":2,"marketValue":1.2,"position":"CA","positions":[["CA"]]},{"name":"Willian José","club":"Bahia","league":"Brasileirão Série A","age":34,"marketValue":1.2,"recent":false,"position":"CA","positions":[["CA"]]},{"name":"Hulk","club":"Fluminense","league":"Brasileirão Série A","age":39,"games":22,"goals":5,"assists":3,"marketValue":1,"recent":false,"position":"CA","positions":[["CA","PD"]],"eafc":80,"photo":"https://upload.wikimedia.org/wikipedia/commons/4/4f/Spar-Zen2015_%283%29.jpg"},{"name":"Talles","club":"Kashima Antlers","league":"J-League (Japão)","titles":["Campeão J1 League 2025"],"marketValue":0.9,"position":"CA","positions":[["CA","PD"]]},{"name":"Lukian","club":"Shonan Bellmare","league":"J-League (Japão)","marketValue":0.9,"position":"CA","positions":[["CA"]]},{"name":"Júnior Brumado","club":"FC Midtjylland","league":"Outras ligas","age":27,"marketValue":0.8,"recent":false,"position":"CA","positions":["CA"]},{"name":"Werik Popó","club":"Fagiano Okayama","league":"J-League (Japão)","marketValue":0.8,"position":"CA","positions":["CA"]},{"name":"Leonardo Rocha","club":"Zagłębie Lubin","league":"Outras ligas","age":29,"goals":9,"assists":1,"marketValue":0.8,"recent":false,"position":"CA","positions":["CA"],"eafc":68},{"name":"Bruno Henrique","club":"Flamengo","league":"Brasileirão Série A","age":35,"marketValue":0.75,"games":12,"goals":0,"assists":1,"recent":false,"titles":["Libertadores 2025"],"position":"CA","positions":[[["CA","PE"],"VOL","MEI"]],"eafc":78},{"name":"Erik (Vissel/Machida)","club":"Machida Zelvia","league":"J-League (Japão)","marketValue":0.7,"position":"CA","positions":["CA"]},{"name":"Fábio Gomes","club":"Mazatlán","league":"Liga MX (México)","age":29,"games":26,"goals":6,"assists":2,"marketValue":0.67,"recent":false,"position":"CA","positions":[["CA"]]},{"name":"Luiz Phellype","club":"Shonan Bellmare","league":"J-League (Japão)","marketValue":0.6,"position":"CA","positions":[["CA"]]},{"name":"Igor Neves","club":"Rukh Lviv","league":"Liga Ucraniana","age":27,"marketValue":0.5,"position":"CA","positions":[["CA"]]},{"name":"Clarismario","club":"Melbourne Victory","league":"Outras ligas","age":24,"marketValue":0.45,"position":"CA","positions":["CA","PE"],"eafc":59},{"name":"Lenny Lobato","club":"Panetolikos","league":"Super League (Grécia)","age":25,"games":16,"goals":1,"assists":1,"rating":6.57,"marketValue":0.4,"recent":false,"position":"CA","positions":["CA","PE"],"eafc":68},{"name":"Bruno Mendes","club":"Deportivo Maldonado","league":"Campeonato Uruguaio","age":31,"prevGames":23,"prevGoals":2,"prevAssists":2,"marketValue":0.3,"position":"CA","positions":["CA"]},{"name":"Kaio Eduardo","club":"FC Basel","league":"Outras ligas","age":21,"marketValue":0.3,"recent":false,"position":"CA","positions":["CA"],"eafc":58},{"name":"Arielson","club":"Damac","league":"Saudi Pro League","age":21,"marketValue":0.275,"position":"CA","positions":["CA"],"eafc":57},{"name":"Tutti","club":"Rukh Lviv","league":"Liga Ucraniana","age":19,"marketValue":0.2,"position":"CA","positions":["CA"]},{"name":"Dentinho","club":"Chapecoense","league":"Brasileirão Série A","age":29,"position":"CA","positions":["CA","PD"],"photo":"https://upload.wikimedia.org/wikipedia/commons/6/66/Dentinho_2020.jpg"},{"name":"Marcelo Rangel Fortaleza","club":"Fortaleza","league":"Brasileirão Série B","age":30,"position":"CA","positions":["CA"]},{"name":"Neto","club":"Chapecoense","league":"Brasileirão Série A","age":32,"position":"CA","positions":["CA"],"photo":"https://upload.wikimedia.org/wikipedia/commons/a/a0/Neto_cropped.png"},{"name":"Willian Bigode","club":"América-MG","league":"Brasileirão Série B","age":38,"position":"CA","positions":["CA"]},{"name":"Everaldo","club":"Coritiba","league":"Brasileirão Série A","age":32,"position":"CA","positions":["CA","PE"]},{"name":"Anselmo","club":"Adelaide United","league":"Outras ligas","position":"CA","positions":["CA"],"eafc":66},{"name":"Robson","club":"Novorizontino","league":"Brasileirão Série B","age":34,"goals":3,"assists":1,"games":10,"position":"CA","positions":["CA"]},{"name":"André Luis","club":"Shanghai Shenhua","league":"Outras ligas","position":"CA","positions":["CA","PD"]},{"name":"Saulo Mineiro","club":"Shanghai Shenhua","league":"Outras ligas","position":"CA","positions":["CA","PE"],"eafc":70},{"name":"Zeca","club":"Shandong Taishan","league":"Outras ligas","age":29,"position":"CA","positions":[[["LD","VOL","CA","PD"],"LD","LE","ZAG"]],"eafc":73},{"name":"Carlinhos","club":"Dibba Al-Fujairah","league":"Outras ligas","position":"CA","positions":["CA"]},{"name":"Pedro Rocha","club":"Coritiba","league":"Brasileirão Série A","age":31,"prevGoals":15,"titles":["Artilheiro da Série B 2025"],"position":"CA","positions":[["CA","PE","PD"]],"eafc":72,"photo":"https://upload.wikimedia.org/wikipedia/commons/0/06/SM-Ural_17_%282%29.jpg"},{"name":"Cesinha","club":"Daegu FC","league":"Outras ligas","age":36,"position":"CA","positions":[["MEI","PD","CA"]],"eafc":74},{"name":"Alan Kardec","club":"Athletico-PR","league":"Brasileirão Série A","age":37,"position":"CA","positions":["CA"]},{"name":"Renato Kayzer","club":"Vitória","league":"Brasileirão Série A","age":30,"position":"CA","positions":["CA"],"eafc":76},{"name":"Tiago Orobó","club":"Jeonbuk Hyundai Motors","league":"Outras ligas","position":"CA","positions":["CA"]},{"name":"Gustavo Coutinho","club":"Coritiba","league":"Brasileirão Série A","age":27,"position":"CA","positions":["CA"],"eafc":74},{"name":"Nenê","club":"AVS Futebol SAD","age":42,"league":"Primeira Liga (Portugal)","position":"CA","positions":["CA","MEI"]},{"name":"Matheus Babi","club":"Suwon FC","league":"Outras ligas","age":28,"position":"CA","positions":["CA"],"eafc":67},{"name":"Rodrigo Moreno","club":"Al-Rayyan","league":"Outras ligas","age":35,"position":"CA","positions":["CA"],"eafc":76,"photo":"https://upload.wikimedia.org/wikipedia/commons/b/b2/Rodrigo_2018_2.jpg"},{"name":"Elias Manoel","club":"CD Santa Clara","age":24,"league":"Primeira Liga (Portugal)","goals":3,"position":"CA","positions":["CA"],"eafc":63},{"name":"Giovani","club":"Al-Sadd","league":"Outras ligas","age":22,"position":"CA","positions":["CA","PE"]},{"name":"Rodrigo Pinho","club":"CF Estrela Amadora","age":35,"league":"Primeira Liga (Portugal)","position":"CA","positions":["CA"],"eafc":70},{"name":"Yago Cariello","club":"Ulsan HD","league":"Outras ligas","age":26,"goals":10,"assists":1,"rating":7.33,"position":"CA","positions":["CA"],"eafc":66},{"name":"Lucas Duarte","club":"FC Felgueiras 1932","age":25,"league":"Liga 2 (Portugal)","goals":10,"position":"CA","positions":["CA"]},{"name":"João Victor","club":"FC Paços de Ferreira","age":25,"league":"Liga 2 (Portugal)","goals":8,"position":"CA","positions":[[["CA","ZAG"],"ZAG"]]},{"name":"Caio Canedo","club":"Al Wahda","league":"Outras ligas","age":35,"goals":1,"position":"CA","positions":["CA","MEI"],"eafc":70},{"name":"Gustavo","club":"Henan FC","league":"Outras ligas","age":32,"position":"CA","positions":["CA"],"eafc":72},{"name":"Wesley Moraes","club":"Shenzhen Peng City","league":"Outras ligas","age":29,"games":13,"goals":5,"position":"CA","positions":["CA"],"eafc":69},{"name":"André Clóvis","club":"Académico de Viseu FC","age":28,"league":"Liga 2 (Portugal)","games":34,"goals":23,"assists":2,"titles":["Artilheiro Liga Portugal 2 2025-26","MVP Liga Portugal 2 2025-26"],"position":"CA","positions":["CA"]},{"name":"Douglas Tanque","club":"Shimizu S-Pulse","league":"J-League (Japão)","position":"CA","positions":["CA"]},{"name":"Cassiano","club":"Casa Pia AC","age":37,"league":"Primeira Liga (Portugal)","position":"CA","positions":["CA"],"eafc":72},{"name":"Carlos Eduardo","club":"Gil Vicente FC","age":23,"league":"Primeira Liga (Portugal)","position":"CA","positions":["CA","PD"],"eafc":65},{"name":"Dellatorre","club":"Coritiba","league":"Brasileirão Série A","age":34,"prevGoals":10,"position":"CA","positions":["CA"],"eafc":70,"photo":"https://upload.wikimedia.org/wikipedia/commons/1/1d/Dellatorre.jpg"},{"name":"Juninho (Olavio Vieira)","club":"Pumas UNAM","league":"Liga MX (México)","age":29,"games":21,"goals":8,"assists":4,"titles":[],"position":"CA","positions":["CA","PD"],"eafc":75},{"name":"Elias","club":"Kolos Kovalivka","league":"Liga Ucraniana","recent":false,"position":"CA","positions":["CA"]},{"name":"Pablo","club":"Gil Vicente FC","age":22,"league":"Primeira Liga (Portugal)","position":"CA","positions":["CA"],"eafc":73},{"name":"Jeh","club":"Göztepe","league":"Süper Lig (Turquia)","age":25,"games":16,"goals":2,"titles":[],"position":"CA","positions":["CA"],"eafc":68},{"name":"Janderson","club":"Göztepe","league":"Süper Lig (Turquia)","age":26,"games":32,"goals":6,"titles":[],"position":"CA","positions":[["CA","PD"]],"eafc":69},{"name":"Sandro Lima","club":"FC Alverca","age":35,"league":"Primeira Liga (Portugal)","position":"CA","positions":["CA"],"eafc":67},{"name":"Guilherme Luiz","club":"Göztepe","league":"Süper Lig (Turquia)","games":13,"goals":0,"titles":[],"position":"CA","positions":["CA"],"eafc":67},{"name":"Guilherme Schettine","club":"Moreirense FC","age":30,"league":"Primeira Liga (Portugal)","position":"CA","positions":["CA"],"eafc":71},{"name":"Yan Maranhão","club":"Moreirense FC","age":23,"league":"Primeira Liga (Portugal)","position":"CA","positions":["CA"]}]/*DATA_END*/;
+const CONTEXT = {
+  coach: "Carlo Ancelotti",
+  formation: "4-3-3",
+  squad: ["Alisson","Ederson","Weverton","Marquinhos","Danilo (Flamengo)","Bremer","Gabriel Magalhães","Léo Pereira","Roger Ibañez","Alex Sandro","Douglas Santos","Casemiro","Bruno Guimarães","Lucas Paquetá","Fabinho","Éderson (Atalanta)","Danilo (Botafogo)","Neymar","Vini Jr","Raphinha","Endrick","Matheus Cunha","Gabriel Martinelli","Luiz Henrique","Igor Thiago","Rayan"],
+  notes: "Capitão: Marquinhos. Wesley (Roma) foi cortado por lesão e substituído por Éderson (Atalanta). Lista anunciada em 18/05/2026.",
+};
+
+/* ================== CONSTANTES ================== */
+const POS_INFO = {
+  GOL:{label:'Goleiro',      group:'GOL'},
+  LD :{label:'Lateral-dir.', group:'DEF'},
+  LE :{label:'Lateral-esq.', group:'DEF'},
+  ZAG:{label:'Zagueiro',     group:'DEF'},
+  VOL:{label:'Volante',      group:'MEI'},
+  MEI:{label:'Meia',         group:'MEI'},
+  PD :{label:'Ponta-dir.',   group:'ATA'},
+  PE :{label:'Ponta-esq.',   group:'ATA'},
+  CA :{label:'Centroavante', group:'ATA'},
+};
+const POS_ORDER = ['GOL','LD','LE','ZAG','VOL','MEI','PD','PE','CA'];
+const GROUP_COLOR = {GOL:'var(--c-gol)', DEF:'var(--c-def)', MEI:'var(--c-mei)', ATA:'var(--c-ata)'};
+const GROUP_LABEL = {GOL:'GOL', DEF:'DEF', MEI:'MEI', ATA:'ATA'};
+
+// Força relativa da liga/copa enfrentada — entra no cálculo do overall (0-100)
+const LEAGUE_STRENGTH = {
+  'Premier League':100,'La Liga':95,'Serie A (Itália)':90,'Bundesliga':90,'Ligue 1':83,
+  'Primeira Liga (Portugal)':74,'Eredivisie':72,'Brasileirão Série A':75,'Liga Argentina':66,
+  'Saudi Pro League':66,'Pro League (Bélgica)':66,'Süper Lig (Turquia)':64,'Liga Russa':63,
+  'Championship (Inglaterra)':68,'Liga MX (México)':61,'MLS (EUA/Canadá)':60,'Super League (Grécia)':60,
+  'J-League (Japão)':59,'Liga Ucraniana':58,'Serie B (Itália)':60,'Bundesliga 2 (Alemanha)':60,
+  'La Liga 2 (Espanha)':60,'Ligue 2 (França)':57,'Brasileirão Série B':56,'Liga 2 (Portugal)':54,
+  'Campeonato Uruguaio':54,'Campeonato Paraguaio':52,'Outras ligas':56,'Sem clube':58,
+};
+// Posições secundárias conhecidas de jogadores versáteis (aplicadas mesmo se a pesquisa não trouxer)
+const POSITIONS_HINT = {
+  'Danilo':['LD','ZAG'],'Danilo (Botafogo)':['VOL','ZAG'],'Alex Sandro':['LE','ZAG'],
+  'Éder Militão':['ZAG','LD'],'Marquinhos':['ZAG','VOL'],'Bruno Guimarães':['VOL','MEI'],
+  'Casemiro':['VOL','ZAG'],'Joelinton':['VOL','CA','MEI'],'Lucas Paquetá':['MEI','VOL'],
+  'Andreas Pereira':['MEI','VOL'],'Gerson':['MEI','VOL'],'Neymar':['MEI','PE'],
+  'Raphinha':['PE','PD'],'Rodrygo':['PD','PE','CA'],'Antony':['PD','PE'],'Savinho':['PD','PE'],
+  'Gabriel Martinelli':['PE','CA'],'Luiz Henrique':['PD','PE'],'Estêvão':['PD','PE'],
+  'João Pedro':['CA','MEI'],'Richarlison':['CA','PE'],'Matheus Cunha':['CA','MEI','PE'],
+  'Endrick':['CA','PE'],'Vini Jr':['PE','CA'],'Yan Couto':['LD','PD'],'Vanderson':['LD','PD'],
+  'Wesley':['LD','PD'],'Guilherme Arana':['LE','PE'],'Luciano Juba':['LE','PE'],'Samuel Lino':['PE','LE'],
+};
+
+const FILTERS = [
+  {key:'all', label:'Todos'},
+  {key:'MEUS',label:'✔ Convocados'},
+  {key:'REAL',label:'⭐ Na Copa 2026'},
+  {key:'RECENTE',label:'🇧🇷 Convocados recentes'},
+  {key:'GOL', label:'Goleiros', pos:['GOL']},
+  {key:'LAT', label:'Laterais', pos:['LD','LE']},
+  {key:'ZAG', label:'Zagueiros', pos:['ZAG']},
+  {key:'VOL', label:'Volantes', pos:['VOL']},
+  {key:'MEI', label:'Meias', pos:['MEI']},
+  {key:'PON', label:'Pontas', pos:['PD','PE']},
+  {key:'CA',  label:'Centroavantes', pos:['CA']},
+];
+
+const FORMATIONS = {
+  '4-3-3':[
+    {pos:'GOL',x:50,y:90},
+    {pos:'LD',x:84,y:71},{pos:'ZAG',x:63,y:76},{pos:'ZAG',x:37,y:76},{pos:'LE',x:16,y:71},
+    {pos:'VOL',x:50,y:57},{pos:'MEI',x:29,y:43},{pos:'MEI',x:71,y:43},
+    {pos:'PD',x:83,y:24},{pos:'CA',x:50,y:14},{pos:'PE',x:17,y:24},
+  ],
+  '4-2-3-1':[
+    {pos:'GOL',x:50,y:90},
+    {pos:'LD',x:84,y:71},{pos:'ZAG',x:63,y:76},{pos:'ZAG',x:37,y:76},{pos:'LE',x:16,y:71},
+    {pos:'VOL',x:37,y:57},{pos:'VOL',x:63,y:57},
+    {pos:'MEI',x:50,y:39},{pos:'PD',x:84,y:29},{pos:'PE',x:16,y:29},
+    {pos:'CA',x:50,y:13},
+  ],
+  '4-4-2':[
+    {pos:'GOL',x:50,y:90},
+    {pos:'LD',x:84,y:71},{pos:'ZAG',x:63,y:76},{pos:'ZAG',x:37,y:76},{pos:'LE',x:16,y:71},
+    {pos:'PD',x:86,y:44},{pos:'VOL',x:63,y:52},{pos:'VOL',x:37,y:52},{pos:'PE',x:14,y:44},
+    {pos:'CA',x:62,y:17},{pos:'CA',x:38,y:17},
+  ],
+  '3-5-2':[
+    {pos:'GOL',x:50,y:90},
+    {pos:'ZAG',x:24,y:77},{pos:'ZAG',x:50,y:80},{pos:'ZAG',x:76,y:77},
+    {pos:'LD',x:89,y:48},{pos:'VOL',x:50,y:60},{pos:'MEI',x:32,y:43},{pos:'MEI',x:68,y:43},{pos:'LE',x:11,y:48},
+    {pos:'CA',x:38,y:16},{pos:'CA',x:62,y:16},
+  ],
+  '4-1-4-1':[
+    {pos:'GOL',x:50,y:90},
+    {pos:'LD',x:84,y:71},{pos:'ZAG',x:63,y:76},{pos:'ZAG',x:37,y:76},{pos:'LE',x:16,y:71},
+    {pos:'VOL',x:50,y:59},
+    {pos:'PD',x:86,y:38},{pos:'MEI',x:64,y:44},{pos:'MEI',x:36,y:44},{pos:'PE',x:14,y:38},
+    {pos:'CA',x:50,y:14},
+  ],
+};
+
+/* ================== ESTADO ================== */
+const SAVE_KEY = 'convocacao-selecao-v1';
+let state = {
+  squad:[],            // ids convocados (índices em DATA)
+  formation:'4-3-3',
+  lineup:Array(11).fill(null),
+  captain:null,
+  tab:1,
+};
+let filter = 'all';
+let sortBy = 'overall';
+let query = '';
+let leagueF = '';
+let clubF = '';
+let ageF = '';
+let sel = null;        // {pid, fromSlot|null} — seleção por toque
+let celebrated = false;
+
+function save(){
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({
+    squad:state.squad, formation:state.formation, lineup:state.lineup,
+    captain:state.captain, tab:state.tab,
+  })); }catch(e){}
+}
+function load(){
+  try{
+    const s = JSON.parse(localStorage.getItem(SAVE_KEY));
+    if(!s) return;
+    if(Array.isArray(s.squad)) state.squad = s.squad.filter(id=>Number.isInteger(id) && DATA[id]);
+    if(FORMATIONS[s.formation]) state.formation = s.formation;
+    if(Array.isArray(s.lineup) && s.lineup.length===11) state.lineup = s.lineup.map(v=>Number.isInteger(v)?v:null);
+    if(Number.isInteger(s.captain)) state.captain = s.captain;
+    if(s.tab===2) state.tab = 2;
+  }catch(e){}
+  sanitize();
+}
+function sanitize(){
+  const inSquad = new Set(state.squad);
+  state.lineup = state.lineup.map(pid => (pid!=null && inSquad.has(pid)) ? pid : null);
+  const seen = new Set();
+  state.lineup = state.lineup.map(pid=>{ if(pid==null||seen.has(pid)) return null; seen.add(pid); return pid; });
+  if(state.captain!=null && !inSquad.has(state.captain)) state.captain = null;
+}
+
+/* ================== HELPERS ================== */
+const $ = id => document.getElementById(id);
+function norm(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); }
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function initials(name){
+  const skip = new Set(['jr','jr.','junior','júnior','de','da','do','dos','das']);
+  const parts = String(name).replace(/\(.*?\)/g,' ').split(/\s+/).filter(w=>w && !skip.has(w.toLowerCase()));
+  if(!parts.length) return String(name).slice(0,2).toUpperCase();
+  if(parts.length===1) return parts[0].slice(0,2).toUpperCase();
+  return (parts[0][0]+parts[parts.length-1][0]).toUpperCase();
+}
+function money(v){ return (v==null) ? '—' : '€ '+String(v).replace('.',',')+' mi'; }
+function leagueOf(p){ return p.league || 'Sem clube'; }
+function statLine(p){
+  const s = [];
+  if(p.games!=null) s.push(p.games+'j');
+  if(p.position==='GOL'){ if(p.cleanSheets!=null) s.push(p.cleanSheets+' s/ gol'); }
+  else{ if(p.goals!=null) s.push(p.goals+'g'); if(p.assists!=null) s.push(p.assists+'a'); }
+  return s.join(' · ') || 'temporada 25/26';
+}
+function groupOf(p){ return POS_INFO[p.position] ? POS_INFO[p.position].group : 'MEI'; }
+function colorOf(p){ return GROUP_COLOR[groupOf(p)]; }
+function possOf(p){ return (p.positions && p.positions.length) ? p.positions : [p.position]; }
+function canPlay(p, code){ return possOf(p).includes(code); }
+
+/* ----- Overall invisível (0-100): usado só para ordenar, nunca aparece ----- */
+function initData(){
+  // 1) garante o array de posições (posição principal + secundárias conhecidas/pesquisadas)
+  DATA.forEach(p=>{
+    let pos = Array.isArray(p.positions) ? p.positions.slice() : [];
+    if(POSITIONS_HINT[p.name]) pos = pos.concat(POSITIONS_HINT[p.name]);
+    pos.unshift(p.position);
+    p.positions = [...new Set(pos.filter(c=>POS_INFO[c]))];
+    if(!p.positions.length) p.positions = [p.position];
+  });
+  // 2) produtividade padronizada DENTRO da posição (compara com pares da mesma posição)
+  const prod = p=>{
+    const g = p.games||0; if(!g) return null;
+    if(p.position==='GOL') return (p.cleanSheets||0)/g;
+    return ((p.goals||0)+(p.assists||0))/g;
+  };
+  const byPos = {};
+  DATA.forEach(p=>{ (byPos[p.position]=byPos[p.position]||[]).push(p); });
+  for(const code in byPos){
+    const arr = byPos[code], vals = arr.map(prod).filter(v=>v!=null);
+    if(vals.length<3){ arr.forEach(p=>p._prodZ=0); continue; }
+    const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
+    const sd = Math.sqrt(vals.reduce((a,b)=>a+(b-mean)*(b-mean),0)/vals.length) || 1;
+    arr.forEach(p=>{ const v=prod(p); p._prodZ = v==null?0:Math.max(-1.5,Math.min(2.5,(v-mean)/sd)); });
+  }
+  // 3) overall final: usa o overall OFICIAL do EA FC quando existir; senão, cálculo próprio como reserva
+  DATA.forEach(p=>{ p._ovr = (typeof p.eafc==='number' && p.eafc>0) ? p.eafc : computeOverall(p); });
+}
+function computeOverall(p){
+  const L = LEAGUE_STRENGTH[p.league]!=null ? LEAGUE_STRENGTH[p.league] : 58;
+  // nota Sofascore com peso de recência: temporada atual cheia, anterior vale metade
+  let rate = null;
+  if(p.rating!=null && p.prevRating!=null) rate = (p.rating + p.prevRating*0.5)/1.5;
+  else if(p.rating!=null) rate = p.rating;
+  else if(p.prevRating!=null) rate = p.prevRating*0.97;
+  // valor de mercado (escala log) — sinal global forte, já embute nível e desempenho
+  const mv = p.marketValue!=null ? p.marketValue : 0;
+  const mvPart = Math.log10(mv+1); // 0 .. ~2.2
+  // títulos: mais recentes e mais importantes pesam mais
+  let tit = 0;
+  (p.titles||[]).forEach(t=>{
+    const y = (String(t).match(/20\d\d/)||[])[0], yr = y?+y:2024;
+    const w = yr>=2026?1 : yr>=2025?0.75 : yr>=2024?0.5 : 0.25;
+    const big = /libertad|champion|mundial|copa do mundo|world|super|premier|la ?liga|serie a|bundes|ligue ?1|brasileir|eredivis|europa|sul-?americ|copa am|euro|melhor|artilhe|bola de ouro|puskas/i.test(t) ? 1.5 : 1;
+    tit += w*big;
+  });
+  tit = Math.min(tit, 6);
+  let raw = 42
+    + mvPart*13                              // valor de mercado
+    + (rate!=null ? (rate-6.6)*10 : 0)       // desempenho (nota, com recência)
+    + (L-62)*0.30                            // nível da liga enfrentada
+    + tit*1.7                                // títulos coletivos/individuais
+    + (p._prodZ||0)*3                        // produtividade vs pares da posição
+    + (p.recent?2:0) + (p.real?2:0);         // presença na seleção
+  if(rate==null && mv===0 && p.games==null) raw = Math.min(raw, 54);
+  return Math.max(40, Math.min(99, Math.round(raw)));
+}
+function countPos(code){ return state.squad.filter(id=>DATA[id].position===code).length; }
+function countGroup(g){ return state.squad.filter(id=>groupOf(DATA[id])===g).length; }
+function squadValid(){ return state.squad.length===26 && countPos('GOL')>=3; }
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ================== ABA 1: CONVOCAÇÃO ================== */
+function populateFilterSelects(){
+  const lsel = $('leagueSel'), csel = $('clubSel');
+  const leagues = {};
+  DATA.forEach(p=>{ const l = leagueOf(p); leagues[l] = (leagues[l]||0)+1; });
+  const lnames = Object.keys(leagues).sort((a,b)=>a.localeCompare(b,'pt'));
+  lsel.innerHTML = '<option value="">Liga: todas</option>'+
+    lnames.map(l=>`<option value="${esc(l)}"${l===leagueF?' selected':''}>${esc(l)} (${leagues[l]})</option>`).join('');
+  const clubs = {};
+  DATA.forEach(p=>{ if(!leagueF || leagueOf(p)===leagueF) clubs[p.club] = (clubs[p.club]||0)+1; });
+  const cnames = Object.keys(clubs).sort((a,b)=>a.localeCompare(b,'pt'));
+  if(clubF && !clubs[clubF]) clubF = '';
+  csel.innerHTML = '<option value="">Clube: todos</option>'+
+    cnames.map(c=>`<option value="${esc(c)}"${c===clubF?' selected':''}>${esc(c)} (${clubs[c]})</option>`).join('');
+}
+function renderChips(){
+  $('chips').innerHTML = FILTERS.map(f=>
+    `<button class="chip${filter===f.key?' active':''}" data-f="${f.key}">${f.label}</button>`
+  ).join('');
+}
+function visiblePlayers(){
+  let ids = DATA.map((_,i)=>i);
+  const f = FILTERS.find(x=>x.key===filter);
+  if(filter==='MEUS') ids = ids.filter(id=>state.squad.includes(id));
+  else if(filter==='REAL') ids = ids.filter(id=>DATA[id].real);
+  else if(filter==='RECENTE') ids = ids.filter(id=>DATA[id].recent || DATA[id].real);
+  else if(f && f.pos) ids = ids.filter(id=>f.pos.some(c=>canPlay(DATA[id],c)));
+  if(leagueF) ids = ids.filter(id=>leagueOf(DATA[id])===leagueF);
+  if(clubF) ids = ids.filter(id=>DATA[id].club===clubF);
+  if(ageF) ids = ids.filter(id=>{
+    const a = DATA[id].age; if(a==null) return false;
+    if(ageF==='u21') return a<=20;
+    if(ageF==='21-24') return a>=21 && a<=24;
+    if(ageF==='25-29') return a>=25 && a<=29;
+    if(ageF==='30-32') return a>=30 && a<=32;
+    if(ageF==='33') return a>=33;
+    return true;
+  });
+  if(query){
+    const q = norm(query);
+    ids = ids.filter(id=>norm(DATA[id].name).includes(q) || norm(DATA[id].club).includes(q));
+  }
+  const r = p=>p.rating!=null?p.rating:-1, v = p=>p.marketValue!=null?p.marketValue:-1, o = p=>p._ovr!=null?p._ovr:0;
+  ids.sort((a,b)=>{
+    const A=DATA[a], B=DATA[b];
+    if(sortBy==='rating') return r(B)-r(A) || o(B)-o(A);
+    if(sortBy==='value')  return v(B)-v(A) || o(B)-o(A);
+    if(sortBy==='age')    return (A.age||99)-(B.age||99) || o(B)-o(A);
+    if(sortBy==='name')   return A.name.localeCompare(B.name,'pt');
+    if(sortBy==='pos')    return POS_ORDER.indexOf(A.position)-POS_ORDER.indexOf(B.position) || o(B)-o(A);
+    return o(B)-o(A) || v(B)-v(A);  // 'overall' (padrão): melhores primeiro
+  });
+  return ids;
+}
+const RENDER_LIMIT = 150;
+function renderCards(){
+  const all = visiblePlayers();
+  if(!all.length){ $('cards').innerHTML = '<div class="empty-msg">Nenhum jogador encontrado 🤔</div>'; $('moreNote').textContent=''; return; }
+  // Mostra sempre os convocados + os melhores até o limite (protege máquinas mais fracas)
+  let ids = all;
+  if(all.length > RENDER_LIMIT){
+    const picked = all.filter(id=>state.squad.includes(id));
+    for(const id of all){ if(picked.length>=RENDER_LIMIT) break; if(!state.squad.includes(id)) picked.push(id); }
+    ids = picked;
+    $('moreNote').textContent = `Mostrando ${ids.length} de ${all.length} jogadores. Use a busca e os filtros (liga, clube, idade, posição) para encontrar os demais.`;
+  } else {
+    $('moreNote').textContent = all.length>60 ? `${all.length} jogadores.` : '';
+  }
+  const full = state.squad.length>=26;
+  $('cards').innerHTML = ids.map(id=>{
+    const p = DATA[id], inSquad = state.squad.includes(id);
+    const info = POS_INFO[p.position]||{label:p.position};
+    const extra = possOf(p).slice(1);
+    const extraHTML = extra.length ? `<span class="pos-badge sec" title="Também joga: ${extra.map(c=>esc((POS_INFO[c]||{label:c}).label)).join(', ')}">+ ${extra.join('/')}</span>` : '';
+    const btn = inSquad
+      ? `<button class="btn btn-cut" data-t="${id}">✂ Cortar</button>`
+      : `<button class="btn btn-add" data-t="${id}" ${full?'disabled title="Já tem 26! Corte alguém antes."':''}>Convocar</button>`;
+    return `<div class="card${inSquad?' in':''}" style="--gc:${colorOf(p)}">
+      <div class="row1">
+        <div class="avatar">${p.photo?`<img src="${esc(p.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:esc(initials(p.name))}</div>
+        <div class="who">
+          <div class="nm">${esc(p.name)}</div>
+          <div class="cl">${esc(p.club)}${p.league?' · '+esc(p.league):''}</div>
+        </div>
+      </div>
+      <div class="badges">
+        <span class="pos-badge">${esc(info.label)}</span>
+        ${extraHTML}
+        ${p.age!=null?`<span class="age-badge">${p.age} anos</span>`:''}
+        ${p.real?'<span class="star" title="Está na convocação oficial da Copa 2026">⭐ Copa 2026</span>':(p.recent?'<span class="star" title="Convocado recentemente pela Seleção">🇧🇷 recente</span>':'')}
+      </div>
+      <div class="stats">
+        <span>${statLine(p)}</span>
+        <span class="val">${money(p.marketValue)}</span>
+        ${p.rating!=null?`<span class="rating${p.rating>=7.3?' hot':''}">${Number(p.rating).toFixed(1).replace('.',',')}</span>`:''}
+      </div>
+      ${btn}
+    </div>`;
+  }).join('');
+}
+function renderSummary(){
+  $('countBig').textContent = state.squad.length;
+  $('barFill').style.width = (state.squad.length/26*100)+'%';
+  const gol = countPos('GOL');
+  const golWarn = gol<3 && state.squad.length>=20;
+  $('gcounts').innerHTML =
+    `<span class="gchip${golWarn?' warn':''}">🧤 GOL ${gol}${gol<3?' (mín. 3)':''}</span>`+
+    `<span class="gchip">🛡 DEF ${countGroup('DEF')}</span>`+
+    `<span class="gchip">⚙ MEI ${countGroup('MEI')}</span>`+
+    `<span class="gchip">⚡ ATA ${countGroup('ATA')}</span>`;
+  $('btnFechar').disabled = !squadValid();
+  $('step2').classList.toggle('done', squadValid());
+}
+function togglePlayer(id){
+  const i = state.squad.indexOf(id);
+  if(i>=0){
+    state.squad.splice(i,1);
+    sanitize();
+    toast(DATA[id].name+' cortado da lista');
+  }else{
+    if(state.squad.length>=26){ toast('Já tem 26 convocados! Corte alguém antes.'); return; }
+    state.squad.push(id);
+    const n = state.squad.length;
+    if(n===26){
+      if(countPos('GOL')>=3){ toast('🎉 26 convocados! Pode fechar a convocação.'); }
+      else toast('26 escolhidos, mas faltam goleiros (mín. 3)!');
+    }else if(n===13) toast('Metade do caminho: 13 de 26!');
+  }
+  save(); renderSummary(); renderCards();
+}
+
+/* ================== ABA 2: ESCALAÇÃO ================== */
+function renderFormChips(){
+  $('formChips').innerHTML = Object.keys(FORMATIONS).map(f=>
+    `<button class="chip${state.formation===f?' active':''}" data-form="${f}">${f}</button>`
+  ).join('');
+}
+function switchFormation(f){
+  if(!FORMATIONS[f] || f===state.formation) return;
+  const oldSlots = FORMATIONS[state.formation], newSlots = FORMATIONS[f];
+  const placed = [];
+  state.lineup.forEach((pid,i)=>{ if(pid!=null) placed.push({pid, slotPos:oldSlots[i].pos}); });
+  const used = new Set(), nl = Array(11).fill(null);
+  const take = (i, pred)=>{
+    const c = placed.find(p=>!used.has(p.pid) && pred(p));
+    if(c){ nl[i]=c.pid; used.add(c.pid); }
+  };
+  newSlots.forEach((s,i)=>take(i, p=>p.slotPos===s.pos));
+  newSlots.forEach((s,i)=>{ if(nl[i]==null) take(i, p=>DATA[p.pid].position===s.pos); });
+  newSlots.forEach((s,i)=>{ if(nl[i]==null) take(i, p=>canPlay(DATA[p.pid],s.pos)); });
+  newSlots.forEach((s,i)=>{ if(nl[i]==null) take(i, p=>groupOf(DATA[p.pid])===POS_INFO[s.pos].group); });
+  newSlots.forEach((s,i)=>{ if(nl[i]==null) take(i, p=> s.pos==='GOL' ? DATA[p.pid].position==='GOL' : DATA[p.pid].position!=='GOL'); });
+  state.formation = f; state.lineup = nl; sel = null;
+  save(); renderLineup();
+}
+function tokenHTML(pid, cls){
+  const p = DATA[pid];
+  const gk = p.position==='GOL' ? ' gk' : '';
+  const cap = state.captain===pid ? '<span class="capbadge">C</span>' : '';
+  const s = sel && sel.pid===pid ? ' sel' : '';
+  return `<div class="${cls}${gk}${s}" data-pid="${pid}" style="--gc:${colorOf(p)}">
+    <div class="shirt">${p.photo?`<img class="face" src="${esc(p.photo)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:esc(initials(p.name))}${cap}</div>
+    <div class="${cls==='btok'?'bname':'tname'}">${esc(p.name)}</div>
+    ${cls==='btok'?`<div class="bpos">${esc((POS_INFO[p.position]||{label:p.position}).label)}</div>`:''}
+  </div>`;
+}
+function renderPitch(){
+  const slots = FORMATIONS[state.formation];
+  $('slotLayer').innerHTML = slots.map((s,i)=>{
+    const pid = state.lineup[i];
+    const inner = pid!=null
+      ? tokenHTML(pid,'token filled')
+      : `<div class="token empty"><div class="shirt">${s.pos}</div></div>`;
+    return `<div class="slot" data-slot="${i}" style="left:${s.x}%;top:${s.y}%"><div class="drop"></div>${inner}</div>`;
+  }).join('');
+}
+function renderBench(){
+  const onField = new Set(state.lineup.filter(v=>v!=null));
+  const benchIds = state.squad.filter(id=>!onField.has(id));
+  $('bench').innerHTML = benchIds.length
+    ? benchIds.map(id=>tokenHTML(id,'btok')).join('')
+    : '<div class="none">Todo mundo em campo? Os reservas aparecem aqui.</div>';
+}
+function renderBanner(){
+  const el = $('cmpBanner');
+  const bits = [];
+  if(CONTEXT && CONTEXT.coach){
+    const agree = state.squad.filter(id=>DATA[id].real).length;
+    if(CONTEXT.squad && CONTEXT.squad.length){
+      bits.push(`⭐ <b>${agree} dos seus 26</b> também estão na convocação oficial de <b>${esc(CONTEXT.coach)}</b> para a Copa 2026.`);
+    }else{
+      bits.push(`Técnico da Seleção: <b>${esc(CONTEXT.coach)}</b>.`);
+    }
+    if(CONTEXT.formation) bits.push(`Formação preferida dele: <b>${esc(CONTEXT.formation)}</b>.`);
+  }
+  const n = state.lineup.filter(v=>v!=null).length;
+  bits.push(n<11 ? `Seu time tem <b>${n}/11</b> em campo.` : `Time completo! 🇧🇷`);
+  el.innerHTML = bits.join(' ');
+}
+function renderHint(){
+  const el = $('hintBar');
+  if(sel){
+    el.innerHTML = `<b>${esc(DATA[sel.pid].name)}</b> selecionado — toque numa posição do campo para colocar (ou toque nele de novo para cancelar).`;
+  }else{
+    el.textContent = 'Arraste do banco para o campo · toque 2x num jogador em campo para fazer dele o capitão 🅲';
+  }
+}
+function renderLineup(){
+  renderFormChips(); renderPitch(); renderBench(); renderBanner(); renderHint();
+}
+
+/* ---------- drag & drop (pointer events: funciona com mouse e dedo) ---------- */
+let drag = null;
+let lastTap = null;
+function beginDrag(e, pid, fromSlot){
+  if(drag) return;
+  drag = {pid, fromSlot, x0:e.clientX, y0:e.clientY, moved:false, pointerId:e.pointerId};
+  window.addEventListener('pointermove', onDragMove);
+  window.addEventListener('pointerup', onDragEnd);
+  window.addEventListener('pointercancel', onDragCancel);
+}
+function slotUnder(x,y){
+  const el = document.elementFromPoint(x,y);
+  return el ? el.closest('.slot') : null;
+}
+function onDragMove(e){
+  if(!drag || e.pointerId!==drag.pointerId) return;
+  if(!drag.moved && Math.hypot(e.clientX-drag.x0, e.clientY-drag.y0) < 8) return;
+  if(!drag.moved){
+    drag.moved = true;
+    const g = document.createElement('div');
+    g.id = 'ghost';
+    const p = DATA[drag.pid];
+    g.innerHTML = `<div class="btok${p.position==='GOL'?' gk':''}" style="--gc:${colorOf(p)}"><div class="shirt">${esc(initials(p.name))}</div><div class="bname">${esc(p.name)}</div></div>`;
+    document.body.appendChild(g);
+    drag.ghost = g;
+  }
+  drag.ghost.style.left = e.clientX+'px';
+  drag.ghost.style.top = e.clientY+'px';
+  document.querySelectorAll('.slot.hot').forEach(s=>s.classList.remove('hot'));
+  const s = slotUnder(e.clientX, e.clientY);
+  if(s) s.classList.add('hot');
+}
+function endDragCleanup(){
+  const g = document.getElementById('ghost'); if(g) g.remove();
+  document.querySelectorAll('.slot.hot').forEach(s=>s.classList.remove('hot'));
+  window.removeEventListener('pointermove', onDragMove);
+  window.removeEventListener('pointerup', onDragEnd);
+  window.removeEventListener('pointercancel', onDragCancel);
+}
+function dropOn(slotIdx, d){
+  if(d.fromSlot===slotIdx) return;
+  const cur = state.lineup[slotIdx];
+  if(d.fromSlot!=null) state.lineup[d.fromSlot] = (cur!=null ? cur : null);
+  state.lineup[slotIdx] = d.pid;
+}
+function onDragEnd(e){
+  if(!drag || e.pointerId!==drag.pointerId) return;
+  const d = drag; drag = null;
+  endDragCleanup();
+  if(d.moved){
+    const s = slotUnder(e.clientX, e.clientY);
+    if(s){ dropOn(+s.dataset.slot, d); sel = null; }
+    else if(d.fromSlot!=null){
+      state.lineup[d.fromSlot] = null;
+      toast(DATA[d.pid].name+' voltou pro banco');
+      sel = null;
+    }
+  }else{
+    // foi um toque, não um arrasto
+    const now = Date.now();
+    if(d.fromSlot!=null && lastTap && lastTap.pid===d.pid && now-lastTap.t<400){
+      // toque duplo num jogador em campo → braçadeira de capitão (funciona no celular e no mouse)
+      state.captain = (state.captain===d.pid) ? null : d.pid;
+      sel = null; lastTap = null;
+      if(state.captain===d.pid) toast(DATA[d.pid].name+' é o capitão! 🅲');
+    }else{
+      lastTap = {pid:d.pid, t:now};
+      if(sel && sel.pid===d.pid){ sel = null; }
+      else if(sel && d.fromSlot!=null){ dropOn(d.fromSlot, sel); sel = null; }
+      else { sel = {pid:d.pid, fromSlot:d.fromSlot}; }
+    }
+  }
+  save(); renderLineup();
+}
+function onDragCancel(){
+  drag = null; endDragCleanup(); renderLineup();
+}
+
+/* ---------- ações da escalação ---------- */
+function autoFill(){
+  const slots = FORMATIONS[state.formation];
+  const nl = Array(11).fill(null), used = new Set();
+  const score = p => (p._ovr!=null?p._ovr:0);
+  const pick = pred=>{
+    let best = null;
+    for(const id of state.squad){
+      if(used.has(id)) continue;
+      const p = DATA[id];
+      if(pred(p) && (best==null || score(p)>score(DATA[best]))) best = id;
+    }
+    return best;
+  };
+  // 1) posição principal exata; 2) qualquer posição que o jogador joga; 3) mesmo setor; 4) o que sobrar (respeitando goleiro)
+  slots.forEach((s,i)=>{ const id = pick(p=>p.position===s.pos); if(id!=null){ nl[i]=id; used.add(id); } });
+  slots.forEach((s,i)=>{ if(nl[i]==null){ const id = pick(p=>canPlay(p,s.pos)); if(id!=null){ nl[i]=id; used.add(id); } } });
+  slots.forEach((s,i)=>{ if(nl[i]==null){ const id = pick(p=>groupOf(p)===POS_INFO[s.pos].group); if(id!=null){ nl[i]=id; used.add(id); } } });
+  slots.forEach((s,i)=>{ if(nl[i]==null){ const id = pick(p=> s.pos==='GOL' ? p.position==='GOL' : p.position!=='GOL'); if(id!=null){ nl[i]=id; used.add(id); } } });
+  state.lineup = nl; sel = null;
+  if(state.captain==null){
+    let best=null; for(const id of nl){ if(id!=null && (best==null || score(DATA[id])>score(DATA[best]))) best=id; }
+    state.captain = best;
+  }
+  save(); renderLineup(); toast('Time escalado! Ajuste como quiser arrastando.');
+}
+function lineupText(){
+  const slots = FORMATIONS[state.formation];
+  const lines = ['🇧🇷 MINHA SELEÇÃO — COPA 2026','Formação: '+state.formation,''];
+  slots.forEach((s,i)=>{
+    const pid = state.lineup[i];
+    const nm = pid!=null ? DATA[pid].name + (state.captain===pid?' (C)':'') : '—';
+    lines.push(s.pos.padEnd(3)+' '+nm);
+  });
+  const onField = new Set(state.lineup.filter(v=>v!=null));
+  const bench = state.squad.filter(id=>!onField.has(id)).map(id=>DATA[id].name);
+  if(bench.length) lines.push('','Banco: '+bench.join(', '));
+  if(CONTEXT && CONTEXT.coach){
+    const agree = state.squad.filter(id=>DATA[id].real).length;
+    if(CONTEXT.squad && CONTEXT.squad.length) lines.push('', agree+'/26 iguais à convocação oficial de '+CONTEXT.coach);
+  }
+  return lines.join('\n');
+}
+function copyText(txt){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(()=>toast('Copiado! Cole onde quiser 📋'), ()=>fallbackCopy(txt));
+  }else fallbackCopy(txt);
+}
+function fallbackCopy(txt){
+  const ta = document.createElement('textarea');
+  ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast('Copiado! Cole onde quiser 📋'); }
+  catch(e){ toast('Não consegui copiar automaticamente 😕'); }
+  ta.remove();
+}
+
+/* ================== TELA DE COMPARTILHAMENTO ================== */
+const GROUP_HEX = {GOL:'#e8e8e8', DEF:'#00c853', MEI:'#4da3ff', ATA:'#ffdf00'};
+function loadImg(url){
+  return new Promise(res=>{
+    if(!url){ res(null); return; }
+    const im = new Image();
+    im.crossOrigin = 'anonymous'; im.referrerPolicy = 'no-referrer';
+    im.onload = ()=>res(im); im.onerror = ()=>res(null);
+    im.src = url;
+  });
+}
+function roundRect(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function drawPitchCanvas(ctx,x,y,w,h){
+  const rows=8;
+  for(let i=0;i<rows;i++){ ctx.fillStyle = (i%2)?'#0a7c37':'#0c8a3e'; ctx.fillRect(x, y+h/rows*i, w, h/rows+1); }
+  ctx.strokeStyle='rgba(255,255,255,.7)'; ctx.lineWidth=3;
+  ctx.strokeRect(x+3,y+3,w-6,h-6);
+  ctx.beginPath(); ctx.moveTo(x, y+h/2); ctx.lineTo(x+w, y+h/2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(x+w/2, y+h/2, h*0.08, 0, Math.PI*2); ctx.stroke();
+  const bw=w*0.42, bh=h*0.12;
+  ctx.strokeRect(x+(w-bw)/2, y+3, bw, bh);
+  ctx.strokeRect(x+(w-bw)/2, y+h-bh-3, bw, bh);
+}
+function drawTokenCanvas(ctx,cx,cy,pid,img){
+  const r=42;
+  if(pid==null){
+    ctx.setLineDash([6,6]); ctx.strokeStyle='rgba(255,255,255,.6)'; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+    return;
+  }
+  const p=DATA[pid], col=GROUP_HEX[groupOf(p)]||'#ffdf00';
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.closePath();
+  if(img){ ctx.clip(); ctx.drawImage(img, cx-r, cy-r, r*2, r*2); ctx.restore(); }
+  else {
+    const grd=ctx.createRadialGradient(cx-10,cy-12,4,cx,cy,r);
+    grd.addColorStop(0,'#ffe95c'); grd.addColorStop(1, p.position==='GOL'?'#4da3ff':'#ffdf00');
+    ctx.fillStyle=grd; ctx.fill(); ctx.restore();
+    ctx.fillStyle='#002776'; ctx.font='900 26px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(initials(p.name), cx, cy+1);
+  }
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.lineWidth=4; ctx.strokeStyle=col; ctx.stroke();
+  if(state.captain===pid){
+    ctx.beginPath(); ctx.arc(cx+r-4, cy-r+4, 13,0,Math.PI*2); ctx.fillStyle='#002776'; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle=col; ctx.stroke();
+    ctx.fillStyle='#ffdf00'; ctx.font='900 16px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('C', cx+r-4, cy-r+5);
+  }
+  const nm=p.name;
+  ctx.font='800 20px Arial'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  const tw=Math.min(ctx.measureText(nm).width+18, 190);
+  roundRect(ctx, cx-tw/2, cy+r+5, tw, 26, 8); ctx.fillStyle='rgba(4,20,45,.9)'; ctx.fill();
+  ctx.save(); roundRect(ctx, cx-tw/2, cy+r+5, tw, 26, 8); ctx.clip();
+  ctx.fillStyle='#fff'; ctx.fillText(nm, cx, cy+r+18); ctx.restore();
+}
+function wrapText(ctx,text,cx,y,maxW,lh){
+  const words=String(text).split(' '); let line=''; const lines=[];
+  for(const w of words){ const t=line?line+' '+w:w; if(ctx.measureText(t).width>maxW && line){ lines.push(line); line=w; } else line=t; }
+  if(line) lines.push(line);
+  lines.slice(0,3).forEach((l,i)=>ctx.fillText(l, cx, y+i*lh));
+}
+async function renderShareCanvas(){
+  const cv=$('shareCanvas'), ctx=cv.getContext('2d');
+  const W=1080,H=1350; cv.width=W; cv.height=H;
+  const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#04225a'); g.addColorStop(.55,'#053a2a'); g.addColorStop(1,'#0a7c37');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+  ctx.fillStyle='#ffdf00'; ctx.font='900 62px Arial'; ctx.fillText('MINHA SELEÇÃO', W/2, 78);
+  ctx.fillStyle='#fff'; ctx.font='700 32px Arial'; ctx.fillText('Copa 2026   ·   '+state.formation, W/2, 126);
+  const px=40,py=158,pw=W-80,ph=930;
+  drawPitchCanvas(ctx,px,py,pw,ph);
+  const slots=FORMATIONS[state.formation];
+  const imgs=await Promise.all(state.lineup.map(pid=> pid!=null ? loadImg(DATA[pid].photo) : Promise.resolve(null)));
+  slots.forEach((s,i)=>{ drawTokenCanvas(ctx, px+s.x/100*pw, py+s.y/100*ph, state.lineup[i], imgs[i]); });
+  const onField=new Set(state.lineup.filter(v=>v!=null));
+  const bench=state.squad.filter(id=>!onField.has(id)).map(id=>DATA[id].name);
+  let fy=py+ph+48; ctx.textAlign='center';
+  if(CONTEXT && CONTEXT.coach && CONTEXT.squad && CONTEXT.squad.length){
+    const agree=state.squad.filter(id=>DATA[id].real).length;
+    ctx.fillStyle='#ffdf00'; ctx.font='800 29px Arial';
+    ctx.fillText('⭐ '+agree+'/26 iguais à convocação de '+CONTEXT.coach, W/2, fy); fy+=46;
+  }
+  if(bench.length){
+    ctx.fillStyle='#cfe0f5'; ctx.font='600 22px Arial';
+    wrapText(ctx, 'Reservas: '+bench.join(', '), W/2, fy, W-90, 30);
+  }
+}
+function downloadImage(){
+  const a=document.createElement('a'); a.download='minha-selecao-2026.png'; a.href=$('shareCanvas').toDataURL('image/png'); a.click();
+}
+async function nativeShare(fallback){
+  try{
+    const blob=await new Promise(r=>$('shareCanvas').toBlob(r,'image/png'));
+    const file=new File([blob],'minha-selecao-2026.png',{type:'image/png'});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], text:lineupText(), title:'Minha Seleção 2026'}); return;
+    }
+  }catch(e){ if(e && e.name==='AbortError') return; }
+  if(fallback) fallback();
+}
+async function openShare(){
+  if(state.lineup.every(v=>v==null)){ toast('Escale ao menos um jogador no campo primeiro ⚽'); return; }
+  $('shareModal').classList.remove('hidden');
+  $('shareSpinner').style.display='block';
+  try{ await renderShareCanvas(); }catch(e){}
+  $('shareSpinner').style.display='none';
+}
+function closeShare(){ $('shareModal').classList.add('hidden'); }
+
+/* ================== NAVEGAÇÃO ================== */
+function goTab(n){
+  if(n===2 && !squadValid()){
+    const falta = 26-state.squad.length;
+    if(state.squad.length<26) toast(`Convoque ${falta} jogador${falta>1?'es':''} para fechar a lista!`);
+    else toast('Você precisa de pelo menos 3 goleiros!');
+    return;
+  }
+  state.tab = n; sel = null; save();
+  $('tab1').classList.toggle('hidden', n!==1);
+  $('tab2').classList.toggle('hidden', n!==2);
+  $('step1').classList.toggle('active', n===1);
+  $('step2').classList.toggle('active', n===2);
+  if(n===2) renderLineup();
+  window.scrollTo({top:0});
+}
+
+/* ================== CONFETTI ================== */
+function confetti(){
+  const cv = $('confetti'), ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const cols = ['#009c3b','#ffdf00','#002776','#ffffff','#00c853'];
+  const parts = Array.from({length:130},()=>({
+    x:Math.random()*cv.width, y:-20-Math.random()*cv.height*.4,
+    w:6+Math.random()*6, h:8+Math.random()*8,
+    vy:2+Math.random()*3.5, vx:-1.5+Math.random()*3,
+    rot:Math.random()*Math.PI, vr:-.12+Math.random()*.24,
+    c:cols[Math.floor(Math.random()*cols.length)],
+  }));
+  let t0 = null;
+  function frame(ts){
+    if(t0==null) t0 = ts;
+    ctx.clearRect(0,0,cv.width,cv.height);
+    for(const p of parts){
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+    }
+    if(ts-t0<2600) requestAnimationFrame(frame);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ================== EVENTOS ================== */
+$('step1').addEventListener('click', ()=>goTab(1));
+$('step2').addEventListener('click', ()=>goTab(2));
+$('btnBack').addEventListener('click', ()=>goTab(1));
+$('btnFechar').addEventListener('click', ()=>{
+  if(!squadValid()) return;
+  if(!celebrated){ confetti(); celebrated = true; }
+  toast('Convocação fechada! Agora monte o time em campo ⚽');
+  goTab(2);
+});
+$('q').addEventListener('input', e=>{ query = e.target.value; renderCards(); });
+$('sortSel').addEventListener('change', e=>{ sortBy = e.target.value; renderCards(); });
+$('leagueSel').addEventListener('change', e=>{ leagueF = e.target.value; populateFilterSelects(); renderCards(); });
+$('clubSel').addEventListener('change', e=>{ clubF = e.target.value; renderCards(); });
+$('ageSel').addEventListener('change', e=>{ ageF = e.target.value; renderCards(); });
+$('btnClearFilters').addEventListener('click', ()=>{
+  query=''; $('q').value=''; filter='all'; leagueF=''; clubF=''; ageF='';
+  $('sortSel').value='overall'; sortBy='overall'; $('ageSel').value='';
+  populateFilterSelects(); renderChips(); renderCards();
+  toast('Filtros limpos!');
+});
+$('chips').addEventListener('click', e=>{
+  const c = e.target.closest('.chip'); if(!c) return;
+  filter = c.dataset.f; renderChips(); renderCards();
+});
+$('cards').addEventListener('click', e=>{
+  const b = e.target.closest('button[data-t]'); if(!b || b.disabled) return;
+  togglePlayer(+b.dataset.t);
+});
+$('formChips').addEventListener('click', e=>{
+  const c = e.target.closest('.chip'); if(!c) return;
+  switchFormation(c.dataset.form);
+});
+$('btnAuto').addEventListener('click', autoFill);
+$('btnClearField').addEventListener('click', ()=>{
+  state.lineup = Array(11).fill(null); sel = null; save(); renderLineup();
+});
+$('btnShareScreen').addEventListener('click', openShare);
+$('btnCloseShare').addEventListener('click', closeShare);
+$('shareModal').addEventListener('click', e=>{ if(e.target.id==='shareModal') closeShare(); });
+$('sbDownload').addEventListener('click', downloadImage);
+$('sbNative').addEventListener('click', ()=> nativeShare(()=>{ downloadImage(); toast('Sem compartilhamento direto aqui — imagem baixada!'); }));
+$('sbWhats').addEventListener('click', ()=> nativeShare(()=> window.open('https://wa.me/?text='+encodeURIComponent(lineupText()),'_blank')) );
+$('sbX').addEventListener('click', ()=> window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(lineupText()),'_blank') );
+$('sbInsta').addEventListener('click', ()=> nativeShare(()=>{ downloadImage(); toast('Imagem baixada! Abra o Instagram e publique 📸'); }));
+$('sbCopy').addEventListener('click', ()=> copyText(lineupText()));
+$('btnReset').addEventListener('click', ()=>{
+  if(!confirm('Apagar a convocação e a escalação e começar do zero?')) return;
+  state = {squad:[], formation:'4-3-3', lineup:Array(11).fill(null), captain:null, tab:1};
+  sel = null; celebrated = false;
+  try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
+  renderChips(); renderSummary(); renderCards(); goTab(1);
+  toast('Tudo limpo! Boa sorte, professor(a) 🇧🇷');
+});
+
+const pitchEl = $('pitch');
+pitchEl.addEventListener('pointerdown', e=>{
+  const t = e.target.closest('.token.filled'); if(!t) return;
+  const slotEl = t.closest('.slot');
+  beginDrag(e, +t.dataset.pid, +slotEl.dataset.slot);
+});
+$('bench').addEventListener('pointerdown', e=>{
+  const t = e.target.closest('.btok'); if(!t) return;
+  beginDrag(e, +t.dataset.pid, null);
+});
+pitchEl.addEventListener('click', e=>{
+  if(!sel) return;
+  const slotEl = e.target.closest('.slot'); if(!slotEl) return;
+  const idx = +slotEl.dataset.slot;
+  if(sel.fromSlot===idx){ return; }
+  dropOn(idx, sel); sel = null; save(); renderLineup();
+});
+/* ================== INÍCIO ================== */
+initData();
+load();
+populateFilterSelects(); renderChips(); renderSummary(); renderCards();
+goTab(state.tab===2 && squadValid() ? 2 : 1);
+</script>
+</body>
+</html>
