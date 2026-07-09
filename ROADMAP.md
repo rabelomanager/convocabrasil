@@ -23,17 +23,17 @@ sugerida do que construir, com uma noção de tamanho de cada coisa e do que cad
 
 ---
 
-## 🎯 Fase 1 — Cobradores e bola parada  🟢
+## ✅ Fase 1 — Cobradores e bola parada  🟢  (CONCLUÍDA)
 
-O primeiro passo natural: em cima da escalação que já existe, escolher quem cobra o quê.
+Painel "⚽ Cobradores (bola parada)" na tela de escalação:
 
-- **Batedor de falta**, **batedor de escanteio** e **batedor de pênalti** — escolhidos entre os 11 em campo.
-- **Sequência de cobradores de pênalti** — uma lista ordenável (1º, 2º, 3º…) para a disputa por pênaltis,
-  montada arrastando os jogadores.
-- Essas escolhas ficam salvas junto da escalação e aparecem na imagem de compartilhamento.
+- **Batedor de falta** e **batedor de escanteio** — escolhidos entre os 11 em campo (menus).
+- **Sequência de cobradores de pênalti** — lista numerada (1º, 2º, 3º…) com ▲▼ para reordenar e ✕ para
+  remover; o **1º da lista é o batedor principal**. Botão **✨ Sugerir** preenche tudo pelos melhores.
+- Fica salvo junto da escalação e aparece na **imagem de compartilhamento** (falta/escanteio/1º pênalti)
+  e no **texto copiado** (sequência completa de pênaltis).
 
-**Por que primeiro:** é leve, não precisa de servidor e já deixa a escalação "completa". Além disso,
-essas informações vão **alimentar a simulação** da Fase 3 (quem bate o pênalti importa no jogo).
+Essas informações vão **alimentar a simulação** da Fase 3 (quem bate o pênalti importa no jogo).
 
 ---
 

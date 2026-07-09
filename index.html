@@ -1059,8 +1059,55 @@ function renderHint(){
     el.textContent = 'Toque num jogador no campo para escolher o capitão 🅲 · arraste do banco para escalar';
   }
 }
+/* ---------- cobradores de bola parada ---------- */
+function fieldPids(){ return state.lineup.filter(v=>v!=null); }
+function shortName(pid){
+  const nm = DATA[pid].name;
+  return nm.length>22 ? nm.slice(0,21)+'…' : nm;
+}
+function renderTakers(){
+  const onField = fieldPids();
+  const sp = $('setPieces');
+  sp.classList.toggle('no-field', onField.length===0);
+  if(onField.length===0) return;
+  const opt = (pid,selPid)=>`<option value="${pid}"${pid===selPid?' selected':''}>${esc(shortName(pid))} · ${esc((POS_INFO[DATA[pid].position]||{label:''}).label)}</option>`;
+  const optionsFor = selPid => `<option value="">— escolher —</option>` + onField.map(pid=>opt(pid,selPid)).join('');
+  $('selFreekick').innerHTML = optionsFor(state.takers.freekick);
+  $('selCorner').innerHTML   = optionsFor(state.takers.corner);
+  // sequência de pênaltis
+  const pl = $('penList');
+  if(state.penalties.length===0){
+    pl.innerHTML = '<li class="pn-empty">Nenhum cobrador definido — adicione abaixo (o 1º é o batedor principal).</li>';
+  }else{
+    pl.innerHTML = state.penalties.map((pid,i)=>`<li>
+      <span class="pn-num">${i+1}</span>
+      <span class="pn-name">${esc(DATA[pid].name)}</span>
+      <button class="pn-btn" data-pen="up" data-i="${i}" ${i===0?'disabled':''} title="Subir">▲</button>
+      <button class="pn-btn" data-pen="down" data-i="${i}" ${i===state.penalties.length-1?'disabled':''} title="Descer">▼</button>
+      <button class="pn-btn rm" data-pen="rm" data-i="${i}" title="Remover">✕</button>
+    </li>`).join('');
+  }
+  const avail = onField.filter(pid=>!state.penalties.includes(pid));
+  $('selAddPen').innerHTML = `<option value="">— adicionar —</option>` + avail.map(pid=>opt(pid,null)).join('');
+  $('selAddPen').parentElement.style.display = avail.length ? '' : 'none';
+}
+function suggestTakers(){
+  const onField = fieldPids();
+  if(!onField.length){ toast('Escale o time primeiro ⚽'); return; }
+  const ovr = pid => (DATA[pid]._ovr||0);
+  // preferência ofensiva para cobranças
+  const atkFirst = onField.slice().sort((a,b)=>{
+    const ga = groupOf(DATA[a])==='ATA'||groupOf(DATA[a])==='MEI' ? 1:0;
+    const gb = groupOf(DATA[b])==='ATA'||groupOf(DATA[b])==='MEI' ? 1:0;
+    return (gb-ga) || (ovr(b)-ovr(a));
+  });
+  state.penalties = atkFirst.slice(0,5);
+  state.takers.freekick = atkFirst[0] ?? null;
+  state.takers.corner = (atkFirst[1] ?? atkFirst[0]) ?? null;
+  save(); renderTakers(); toast('Cobradores sugeridos! Ajuste como quiser.');
+}
 function renderLineup(){
-  renderFormChips(); renderPitch(); renderBench(); renderBanner(); renderHint();
+  renderFormChips(); renderPitch(); renderBench(); renderBanner(); renderHint(); renderTakers();
 }
 
 /* ---------- drag & drop (pointer events: funciona com mouse e dedo) ---------- */
@@ -1178,6 +1225,12 @@ function lineupText(){
   const onField = new Set(state.lineup.filter(v=>v!=null));
   const bench = state.squad.filter(id=>!onField.has(id)).map(id=>DATA[id].name);
   if(bench.length) lines.push('','Banco: '+bench.join(', '));
+  // bola parada
+  const sp = [];
+  if(state.takers.freekick!=null) sp.push('Falta: '+DATA[state.takers.freekick].name);
+  if(state.takers.corner!=null) sp.push('Escanteio: '+DATA[state.takers.corner].name);
+  if(state.penalties.length) sp.push('Pênaltis: '+state.penalties.map((pid,i)=>(i+1)+'º '+DATA[pid].name).join(', '));
+  if(sp.length){ lines.push('','⚽ Bola parada'); sp.forEach(x=>lines.push(x)); }
   return lines.join('\n');
 }
 function copyText(txt){
@@ -1261,24 +1314,33 @@ async function renderShareCanvas(){
   ctx.textAlign='center'; ctx.textBaseline='alphabetic';
   ctx.fillStyle='#ffdf00'; ctx.font='900 62px Arial'; ctx.fillText('MINHA SELEÇÃO', W/2, 78);
   ctx.fillStyle='#fff'; ctx.font='700 32px Arial'; ctx.fillText('Copa 2030   ·   '+state.formation, W/2, 126);
-  const px=40,py=158,pw=W-80,ph=930;
+  const px=40,py=158,pw=W-80,ph=875;
   drawPitchCanvas(ctx,px,py,pw,ph);
   const slots=FORMATIONS[state.formation];
   const imgs=await Promise.all(state.lineup.map(pid=> pid!=null ? loadImg(DATA[pid].photo) : Promise.resolve(null)));
   slots.forEach((s,i)=>{ drawTokenCanvas(ctx, px+s.x/100*pw, py+s.y/100*ph, state.lineup[i], imgs[i]); });
   const onField=new Set(state.lineup.filter(v=>v!=null));
   const bench=state.squad.filter(id=>!onField.has(id)).map(id=>DATA[id].name);
-  let fy=py+ph+52; ctx.textAlign='center';
+  let fy=py+ph+42; ctx.textAlign='center';
   if(bench.length){
-    ctx.fillStyle='#cfe0f5'; ctx.font='600 22px Arial';
-    wrapText(ctx, 'Reservas: '+bench.join(', '), W/2, fy, W-90, 30);
+    ctx.fillStyle='#cfe0f5'; ctx.font='600 20px Arial';
+    wrapText(ctx, 'Reservas: '+bench.join(', '), W/2, fy, W-90, 26);
+  }
+  // bola parada (compacto — sequência completa vai no texto copiado)
+  const spParts=[];
+  if(state.takers.freekick!=null) spParts.push('Falta: '+DATA[state.takers.freekick].name);
+  if(state.takers.corner!=null) spParts.push('Escanteio: '+DATA[state.takers.corner].name);
+  if(state.penalties.length) spParts.push('Pênalti: '+DATA[state.penalties[0]].name);
+  if(spParts.length){
+    ctx.fillStyle='#ffd633'; ctx.font='700 21px Arial';
+    wrapText(ctx, '⚽ '+spParts.join('   ·   '), W/2, 1180, W-90, 27);
   }
   // marca / crédito no rodapé da imagem
   ctx.textAlign='center';
   ctx.fillStyle='#ffd633'; ctx.font='800 32px Arial';
-  ctx.fillText('convocabrasil.vercel.app', W/2, H-60);
+  ctx.fillText('convocabrasil.vercel.app', W/2, H-58);
   ctx.fillStyle='#eef3fb'; ctx.font='600 27px Arial';
-  ctx.fillText('📷 @brasilconvoca', W/2, H-24);
+  ctx.fillText('📷 @brasilconvoca', W/2, H-22);
 }
 function downloadImage(){
   const a=document.createElement('a'); a.download='minha-selecao-2030.png'; a.href=$('shareCanvas').toDataURL('image/png'); a.click();
@@ -1383,6 +1445,22 @@ $('btnAuto').addEventListener('click', autoFill);
 $('btnClearField').addEventListener('click', ()=>{
   state.lineup = Array(11).fill(null); sel = null; save(); renderLineup();
 });
+/* ---- cobradores de bola parada ---- */
+$('selFreekick').addEventListener('change', e=>{ state.takers.freekick = e.target.value?+e.target.value:null; save(); });
+$('selCorner').addEventListener('change', e=>{ state.takers.corner = e.target.value?+e.target.value:null; save(); });
+$('selAddPen').addEventListener('change', e=>{
+  const pid = e.target.value?+e.target.value:null;
+  if(pid!=null && !state.penalties.includes(pid)){ state.penalties.push(pid); save(); renderTakers(); }
+});
+$('penList').addEventListener('click', e=>{
+  const b = e.target.closest('.pn-btn'); if(!b) return;
+  const i = +b.dataset.i, act = b.dataset.pen;
+  if(act==='rm'){ state.penalties.splice(i,1); }
+  else if(act==='up' && i>0){ const t=state.penalties[i-1]; state.penalties[i-1]=state.penalties[i]; state.penalties[i]=t; }
+  else if(act==='down' && i<state.penalties.length-1){ const t=state.penalties[i+1]; state.penalties[i+1]=state.penalties[i]; state.penalties[i]=t; }
+  save(); renderTakers();
+});
+$('btnSuggestTakers').addEventListener('click', suggestTakers);
 $('btnShareScreen').addEventListener('click', openShare);
 $('btnCloseShare').addEventListener('click', closeShare);
 $('shareModal').addEventListener('click', e=>{ if(e.target.id==='shareModal') closeShare(); });
@@ -1394,7 +1472,7 @@ $('sbInsta').addEventListener('click', ()=> nativeShare(()=>{ downloadImage(); t
 $('sbCopy').addEventListener('click', ()=> copyText(lineupText()));
 $('btnReset').addEventListener('click', ()=>{
   if(!confirm('Apagar a convocação e a escalação e começar do zero?')) return;
-  state = {squad:[], formation:'4-3-3', lineup:Array(11).fill(null), captain:null, tab:1};
+  state = {squad:[], formation:'4-3-3', lineup:Array(11).fill(null), captain:null, takers:{freekick:null,corner:null}, penalties:[], tab:1};
   sel = null; celebrated = false;
   try{ localStorage.removeItem(SAVE_KEY); }catch(e){}
   renderChips(); renderSummary(); renderCards(); goTab(1);
