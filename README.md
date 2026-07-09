@@ -3,7 +3,7 @@
 Site para você montar a sua convocação da Seleção Brasileira (26 jogadores) e escalar o time num campo, arrastando os jogadores. Tema verde-amarelo-azul, sem login, funciona no computador e no celular.
 
 ## O que tem
-- **664 jogadores brasileiros** das principais ligas do mundo (dados pesquisados em 06/07/2026).
+- **Quase 1500 jogadores brasileiros** das principais ligas do mundo (dados pesquisados em 06/07/2026).
 - Overall baseado no **EA Sports FC** (invisível, usado para ordenar "melhores primeiro").
 - Filtros por **posição, liga, clube, idade** e busca por nome.
 - Jogadores podem ter **mais de uma posição**.
