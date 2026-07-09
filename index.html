@@ -1127,7 +1127,6 @@ function toggleCaptain(pid){
 
 /* ---------- drag & drop (pointer events: funciona com mouse e dedo) ---------- */
 let drag = null;
-let justDragged = 0;   // marca o fim de um arraste, para ignorar o "click" que o segue
 function beginDrag(e, pid, fromSlot){
   if(drag) return;
   drag = {pid, fromSlot, x0:e.clientX, y0:e.clientY, moved:false, pointerId:e.pointerId};
@@ -1141,7 +1140,8 @@ function slotUnder(x,y){
 }
 function onDragMove(e){
   if(!drag || e.pointerId!==drag.pointerId) return;
-  if(!drag.moved && Math.hypot(e.clientX-drag.x0, e.clientY-drag.y0) < 8) return;
+  if(drag.pid==null) return;   // posição vazia não pode ser arrastada
+  if(!drag.moved && Math.hypot(e.clientX-drag.x0, e.clientY-drag.y0) < 28) return;
   if(!drag.moved){
     drag.moved = true;
     const g = document.createElement('div');
@@ -1174,14 +1174,25 @@ function onDragEnd(e){
   if(!drag || e.pointerId!==drag.pointerId) return;
   const d = drag; drag = null;
   endDragCleanup();
-  // só tratamos ARRASTES aqui. Um toque parado (sem mover) é ignorado — quem cuida
-  // da seleção é o evento 'click' (bem mais confiável que detectar toque no ponteiro).
-  if(!d.moved) return;
-  justDragged = Date.now();
+  if(!d.moved){
+    // TOQUE (sem arrastar) — tratado no pointerup, que SEMPRE dispara (o evento 'click'
+    // às vezes é cancelado pelo navegador quando o dedo/mouse se mexe 1-2px). Garante a
+    // seleção e a escolha de capitão.
+    if(d.pid==null){
+      // toque numa POSIÇÃO VAZIA do campo
+      if(sel){ dropOn(d.fromSlot, sel); sel = null; save(); renderLineup(); }
+      else toast('Toque num jogador (banco ou campo) primeiro 👇');
+      return;
+    }
+    if(sel && sel.pid===d.pid){ sel = null; updateSelUI(); save(); return; }        // toca de novo → desseleciona
+    if(sel && d.fromSlot!=null){ dropOn(d.fromSlot, sel); sel = null; save(); renderLineup(); return; } // move o selecionado pra cá
+    sel = {pid:d.pid, fromSlot:d.fromSlot}; updateSelUI(); save(); return;           // seleciona (mostra ações)
+  }
+  // ARRASTE de verdade
   const s = slotUnder(e.clientX, e.clientY);
   if(s){ dropOn(+s.dataset.slot, d); sel = null; }
   else if(d.fromSlot!=null){ state.lineup[d.fromSlot] = null; toast(DATA[d.pid].name+' voltou pro banco'); sel = null; }
-  else { return; }  // arraste do banco solto fora: nada
+  else { return; }
   save(); renderLineup();
 }
 // destaque leve da seleção, sem reconstruir os tokens
@@ -1487,39 +1498,16 @@ $('btnReset').addEventListener('click', ()=>{
 });
 
 const pitchEl = $('pitch');
+// pointerdown em QUALQUER posição do campo (cheia ou vazia). Toque e arraste são
+// resolvidos no pointerup (onDragEnd) — o evento mais confiável, imune a micro-movimentos.
 pitchEl.addEventListener('pointerdown', e=>{
-  const t = e.target.closest('.token.filled'); if(!t) return;
-  const slotEl = t.closest('.slot');
-  beginDrag(e, +t.dataset.pid, +slotEl.dataset.slot);
+  const slotEl = e.target.closest('.slot'); if(!slotEl) return;
+  const idx = +slotEl.dataset.slot;
+  beginDrag(e, state.lineup[idx], idx);   // pid = null se a posição estiver vazia
 });
 $('bench').addEventListener('pointerdown', e=>{
   const t = e.target.closest('.btok'); if(!t) return;
   beginDrag(e, +t.dataset.pid, null);
-});
-// CLIQUE no campo (evento simples, confiável): seleciona/move jogadores
-pitchEl.addEventListener('click', e=>{
-  if(Date.now()-justDragged < 350) return;      // ignora o clique que segue um arraste
-  const slotEl = e.target.closest('.slot'); if(!slotEl) return;
-  const idx = +slotEl.dataset.slot;
-  const pidHere = state.lineup[idx];
-  if(pidHere!=null){
-    // clicou num jogador que está em campo
-    if(sel && sel.pid===pidHere){ sel = null; updateSelUI(); save(); }        // clicou de novo → desseleciona
-    else if(sel){ dropOn(idx, sel); sel = null; save(); renderLineup(); }      // move o selecionado pra cá (troca)
-    else { sel = {pid:pidHere, fromSlot:idx}; updateSelUI(); save(); }         // seleciona (mostra ações)
-  }else{
-    // clicou numa posição vazia
-    if(sel){ dropOn(idx, sel); sel = null; save(); renderLineup(); }
-    else { toast('Toque num reserva (no banco) e depois na posição 👇'); }
-  }
-});
-// CLIQUE no banco: seleciona um reserva
-$('bench').addEventListener('click', e=>{
-  if(Date.now()-justDragged < 350) return;
-  const t = e.target.closest('.btok'); if(!t) return;
-  const pid = +t.dataset.pid;
-  if(sel && sel.pid===pid){ sel = null; } else { sel = {pid, fromSlot:null}; }
-  updateSelUI(); save();
 });
 // botões da barra de dica (capitão / banco / cancelar)
 $('hintBar').addEventListener('click', e=>{
