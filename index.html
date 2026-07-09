@@ -1110,6 +1110,19 @@ function renderLineup(){
   renderFormChips(); renderPitch(); renderBench(); renderBanner(); renderHint(); renderTakers();
 }
 
+/* ---------- capitão (com debounce p/ não alternar 2x no mesmo gesto) ---------- */
+let lastCapToggle = 0;
+function toggleCaptain(pid){
+  if(pid==null) return;
+  const now = Date.now();
+  if(now - lastCapToggle < 250) return;   // ignora o 2º disparo do mesmo duplo-clique
+  lastCapToggle = now;
+  const becoming = state.captain!==pid;
+  state.captain = becoming ? pid : null;
+  sel = null; save(); renderLineup();
+  toast(becoming ? DATA[pid].name+' é o capitão! 🅲' : 'Capitão removido');
+}
+
 /* ---------- drag & drop (pointer events: funciona com mouse e dedo) ---------- */
 let drag = null;
 let lastTap = null;
@@ -1171,18 +1184,27 @@ function onDragEnd(e){
     // foi um toque, não um arrasto
     const now = Date.now();
     if(d.fromSlot!=null && lastTap && lastTap.pid===d.pid && now-lastTap.t<600){
-      // toque duplo num jogador em campo → braçadeira de capitão (funciona no celular e no mouse)
-      state.captain = (state.captain===d.pid) ? null : d.pid;
-      sel = null; lastTap = null;
-      if(state.captain===d.pid) toast(DATA[d.pid].name+' é o capitão! 🅲');
-    }else{
-      lastTap = {pid:d.pid, t:now};
-      if(sel && sel.pid===d.pid){ sel = null; }
-      else if(sel && d.fromSlot!=null){ dropOn(d.fromSlot, sel); sel = null; }
-      else { sel = {pid:d.pid, fromSlot:d.fromSlot}; }
+      // toque duplo num jogador em campo → braçadeira de capitão (reforço p/ celular)
+      lastTap = null; toggleCaptain(d.pid);
+      return;
     }
+    lastTap = {pid:d.pid, t:now};
+    // apenas selecionar/desselecionar: atualização LEVE (não reconstrói o token,
+    // senão o duplo-clique nativo do navegador não dispara)
+    if(sel && sel.pid===d.pid){ sel = null; updateSelUI(); save(); return; }
+    if(!sel){ sel = {pid:d.pid, fromSlot:d.fromSlot}; updateSelUI(); save(); return; }
+    // havia outro jogador selecionado e este está no campo: troca de lugar (precisa re-render)
+    if(sel && d.fromSlot!=null){ dropOn(d.fromSlot, sel); sel = null; }
+    else { sel = {pid:d.pid, fromSlot:d.fromSlot}; updateSelUI(); save(); return; }
   }
   save(); renderLineup();
+}
+// destaque leve da seleção, sem reconstruir os tokens (preserva o nó p/ o dblclick nativo)
+function updateSelUI(){
+  document.querySelectorAll('#pitch .token.filled, #bench .btok').forEach(t=>{
+    t.classList.toggle('sel', !!sel && +t.dataset.pid===sel.pid);
+  });
+  renderHint();
 }
 function onDragCancel(){
   drag = null; endDragCleanup(); renderLineup();
@@ -1496,18 +1518,17 @@ pitchEl.addEventListener('click', e=>{
   if(sel.fromSlot===idx){ return; }
   dropOn(idx, sel); sel = null; save(); renderLineup();
 });
+// duplo-clique num jogador em campo → capitão (detecção nativa do navegador, imune a lag)
+pitchEl.addEventListener('dblclick', e=>{
+  const t = e.target.closest('.token.filled'); if(!t) return;
+  toggleCaptain(+t.dataset.pid);
+});
 // botões da barra de dica (capitão / cancelar) — caminho confiável para o capitão
 $('hintBar').addEventListener('click', e=>{
   const b = e.target.closest('.hint-btn'); if(!b || !sel) return;
   const act = b.dataset.act;
-  if(act==='cap'){
-    const pid = sel.pid, becoming = (state.captain!==pid);
-    state.captain = becoming ? pid : null;
-    sel = null; save(); renderLineup();
-    toast(becoming ? DATA[pid].name+' é o capitão! 🅲' : 'Capitão removido');
-  }else if(act==='cancel'){
-    sel = null; renderLineup();
-  }
+  if(act==='cap'){ toggleCaptain(sel.pid); }
+  else if(act==='cancel'){ sel = null; renderLineup(); }
 });
 /* ================== TELA INICIAL ================== */
 function startApp(){
